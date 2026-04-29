@@ -1,0 +1,351 @@
+/* ============================================
+   LANDING PAGE — Finix
+   ============================================ */
+
+/* ---- Hero Section ---- */
+.landing-wrapper {
+  min-height: 100vh;
+  background: #f8f7ff;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---- Navbar ---- */
+.landing-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 60px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.brand-icon {
+  width: 42px;
+  height: 42px;
+  background: linear-gradient(135deg, #4c3cfa, #7d6cfc);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 20px;
+  box-shadow: 0 4px 15px rgba(76, 60, 250, 0.4);
+}
+
+.brand-name {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.btn-outline-primary-finix {
+  padding: 10px 24px;
+  border: 2px solid #4c3cfa;
+  color: #4c3cfa;
+  background: transparent;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-primary-finix:hover {
+  background: #4c3cfa;
+  color: white;
+}
+
+.btn-primary-finix {
+  padding: 10px 28px;
+  background: linear-gradient(135deg, #4c3cfa, #7d6cfc);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  box-shadow: 0 4px 20px rgba(76, 60, 250, 0.35);
+  transition: all 0.3s ease;
+}
+
+.btn-primary-finix:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(76, 60, 250, 0.45);
+  color: white;
+}
+
+/* ---- Hero ---- */
+.hero-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 60px 60px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Decorative blobs */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.2;
+  pointer-events: none;
+}
+.blob-1 {
+  width: 500px;
+  height: 500px;
+  background: #4c3cfa;
+  top: -150px;
+  left: -100px;
+}
+.blob-2 {
+  width: 400px;
+  height: 400px;
+  background: #7d6cfc;
+  bottom: -100px;
+  right: -50px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #ecebff;
+  color: #4c3cfa;
+  padding: 8px 20px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 28px;
+  border: 1px solid #d4d0ff;
+}
+
+.hero-badge i {
+  font-size: 14px;
+}
+
+.hero-title {
+  font-size: 62px;
+  font-weight: 800;
+  line-height: 1.1;
+  color: #1a1a2e;
+  margin-bottom: 24px;
+  letter-spacing: -1px;
+}
+
+.hero-title .highlight {
+  background: linear-gradient(135deg, #4c3cfa, #a084f5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-subtitle {
+  font-size: 18px;
+  color: #6b7280;
+  max-width: 520px;
+  margin: 0 auto 44px;
+  line-height: 1.7;
+}
+
+.hero-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.btn-hero-primary {
+  padding: 16px 40px;
+  background: linear-gradient(135deg, #4c3cfa, #7d6cfc);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 16px;
+  text-decoration: none;
+  box-shadow: 0 8px 30px rgba(76, 60, 250, 0.4);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-hero-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(76, 60, 250, 0.5);
+  color: white;
+}
+
+.btn-hero-secondary {
+  padding: 16px 40px;
+  background: white;
+  color: #4c3cfa;
+  border: 2px solid #e5e3ff;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 16px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-hero-secondary:hover {
+  border-color: #4c3cfa;
+  transform: translateY(-3px);
+  color: #4c3cfa;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.07);
+}
+
+/* ---- Stats Strip ---- */
+.stats-strip {
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  padding: 40px 60px;
+  background: white;
+  border-top: 1px solid #f0eeff;
+  border-bottom: 1px solid #f0eeff;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 32px;
+  font-weight: 800;
+  color: #4c3cfa;
+  display: block;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: #9ca3af;
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+/* ---- Features ---- */
+.features-section {
+  padding: 80px 60px;
+  text-align: center;
+}
+
+.section-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #4c3cfa;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-size: 38px;
+  font-weight: 800;
+  color: #1a1a2e;
+  margin-bottom: 60px;
+  letter-spacing: -0.5px;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.feature-card {
+  background: white;
+  border-radius: 24px;
+  padding: 36px 28px;
+  border: 1px solid #f0eeff;
+  text-align: left;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 12px rgba(76, 60, 250, 0.04);
+}
+
+.feature-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(76, 60, 250, 0.12);
+  border-color: #d4d0ff;
+}
+
+.feature-icon {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #ecebff, #ddd8ff);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #4c3cfa;
+  margin-bottom: 20px;
+}
+
+.feature-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 10px;
+}
+
+.feature-desc {
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* ---- Footer ---- */
+.landing-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 60px;
+  border-top: 1px solid #f0eeff;
+  background: white;
+}
+
+.footer-copy {
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.footer-links {
+  display: flex;
+  gap: 24px;
+}
+
+.footer-links a {
+  font-size: 13px;
+  color: #9ca3af;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover {
+  color: #4c3cfa;
+}

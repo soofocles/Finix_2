@@ -1,0 +1,98 @@
+<div class="auth-wrapper">
+
+  <!-- ===== LEFT PANEL ===== -->
+  <div class="auth-left">
+    <a class="auth-brand" routerLink="/">
+      <div class="auth-brand-icon">
+        <i class="bi bi-play-circle-fill"></i>
+      </div>
+      <span class="auth-brand-name">Finix</span>
+    </a>
+
+    <div class="auth-left-content">
+      <h2 class="auth-left-title">
+        Bienvenido<br>de nuevo 👋
+      </h2>
+      <p class="auth-left-subtitle">
+        Inicia sesión y retoma el control de tus finanzas personales desde donde lo dejaste.
+      </p>
+      <ul class="auth-features">
+        <li>
+          <span class="feat-icon"><i class="bi bi-graph-up-arrow"></i></span>
+          Balance en tiempo real
+        </li>
+        <li>
+          <span class="feat-icon"><i class="bi bi-pie-chart"></i></span>
+          Visualización de finanzas por categoría
+        </li>
+        <li>
+          <span class="feat-icon"><i class="bi bi-shield-check"></i></span>
+          Cifrado de extremo a extremo
+        </li>
+      </ul>
+    </div>
+
+    <span class="auth-left-footer">© 2026 Finix · Todos los derechos reservados</span>
+  </div>
+
+  <!-- ===== RIGHT PANEL ===== -->
+  <div class="auth-right">
+    <div class="auth-form-box">
+
+      <h1 class="auth-form-title">Iniciar sesión</h1>
+      <p class="auth-form-subtitle">
+        ¿No tienes cuenta? <a routerLink="/register">Regístrate gratis</a>
+      </p>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <!-- Mensaje de error -->
+        @if (errorMessage) {
+          <div class="alert alert-danger py-2 small fw-semibold" role="alert">
+            {{ errorMessage }}
+          </div>
+        }
+
+        <!-- Email -->
+        <div class="form-group">
+          <label class="form-label-custom">Correo electrónico</label>
+          <div class="input-wrapper">
+            <i class="bi bi-envelope input-icon"></i>
+            <input type="email" formControlName="email" class="form-input-custom" placeholder="tu@correo.com" />
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label class="form-label-custom">Contraseña</label>
+          <div class="input-wrapper">
+            <i class="bi bi-lock input-icon"></i>
+            <input [type]="showPassword ? 'text' : 'password'" formControlName="password" class="form-input-custom" placeholder="Tu contraseña" />
+            <button type="button" class="input-toggle" (click)="togglePassword()">
+              <i [class]="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Forgot password -->
+        <div class="form-meta">
+          <a routerLink="/forgot-password" class="forgot-link">¿Olvidaste tu contraseña?</a>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="btn-auth-submit" [disabled]="loginForm.invalid || isLoading">
+          @if (isLoading) {
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            Iniciando sesión...
+          } @else {
+            Iniciar sesión
+            <i class="bi bi-arrow-right"></i>
+          }
+        </button>
+      </form>
+
+
+
+    </div>
+  </div>
+
+</div>

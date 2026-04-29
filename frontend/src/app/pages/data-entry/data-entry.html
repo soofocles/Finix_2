@@ -1,0 +1,174 @@
+<div class="container-fluid p-0">
+    <div class="row g-0 min-vh-100">
+
+        <!-- ===== SIDEBAR ===== -->
+        <nav class="col-md-2 sidebar d-flex flex-column p-4">
+            <div class="d-flex align-items-center mb-5 brand-logo">
+                <i class="bi bi-play-circle-fill fs-3 me-2 text-white"></i>
+                <span class="fs-4 fw-bold text-white">Finix</span>
+            </div>
+
+            <p class="text-white-50 text-uppercase small mb-3 fw-semibold">Menu</p>
+            <ul class="nav flex-column mb-auto">
+                <li class="nav-item mb-2">
+                    <a routerLink="/dashboard" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" class="nav-link text-white-50 hover-link">
+                        <i class="bi bi-house-door me-3 fs-5"></i> Inicio
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a routerLink="/reports" routerLinkActive="active-link" class="nav-link text-white-50 hover-link">
+                        <i class="bi bi-bar-chart-line me-3 fs-5"></i> Reportes
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a routerLink="/data-entry" routerLinkActive="active-link" class="nav-link text-white active-link">
+                        <i class="bi bi-table me-3 fs-5"></i> Mis Datos
+                    </a>
+                </li>
+
+                <li class="nav-item mb-2">
+                    <a routerLink="/profile" routerLinkActive="active-link" class="nav-link text-white-50 hover-link">
+                        <i class="bi bi-gear me-3 fs-5"></i> Configuración
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- ===== MAIN CONTENT ===== -->
+        <main class="col-md-10 px-5 py-4 bg-white center-panel" style="border-radius: 40px 0 0 40px; overflow-y: auto; max-height: 100vh;">
+            
+            <div class="mb-5">
+                <h3 class="fw-bold">Ingreso de Datos 📝</h3>
+                <p class="text-muted small">Registra nuevos valores para mantener tus gráficas actualizadas.</p>
+            </div>
+
+            <div class="row g-4">
+                <!-- Formulario -->
+                <div class="col-md-4">
+                    <div class="p-4 rounded-4 border bg-white shadow-sm position-sticky" style="top: 20px;">
+                        <h6 class="fw-bold mb-4">Añadir Nuevo Registro</h6>
+                        
+                        <form [formGroup]="financeForm" (ngSubmit)="onSubmit()">
+                            
+                            <div *ngIf="errorMessage" class="alert alert-danger py-2 small">{{ errorMessage }}</div>
+                            <div *ngIf="successMessage" class="alert alert-success py-2 small">{{ successMessage }}</div>
+
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold text-muted">Tipo de Movimiento</label>
+                                <div class="d-flex gap-2">
+                                    <input type="radio" class="btn-check" formControlName="tipo" value="ingreso" id="ingreso">
+                                    <label class="btn btn-outline-success flex-fill rounded-3" for="ingreso" (click)="setTipo('ingreso')">Ingreso</label>
+
+                                    <input type="radio" class="btn-check" formControlName="tipo" value="gasto" id="gasto">
+                                    <label class="btn btn-outline-danger flex-fill rounded-3" for="gasto" (click)="setTipo('gasto')">Gasto</label>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold text-muted">Monto</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0">$</span>
+                                    <input type="number" formControlName="monto" class="form-control border-start-0 ps-0" placeholder="0.00" step="0.01">
+                                </div>
+                                <div *ngIf="financeForm.get('monto')?.invalid && financeForm.get('monto')?.touched" class="text-danger small mt-1">
+                                    Monto es requerido y debe ser mayor a 0.
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold text-muted">Categoría</label>
+                                <select class="form-select" formControlName="categoria">
+                                    <option value="" disabled>Selecciona una categoría...</option>
+                                    <ng-container *ngIf="financeForm.get('tipo')?.value === 'ingreso'">
+                                        <option value="salario">Salario</option>
+                                        <option value="inversiones">Inversiones</option>
+                                        <option value="otros_ingresos">Otros Ingresos</option>
+                                    </ng-container>
+                                    <ng-container *ngIf="financeForm.get('tipo')?.value === 'gasto'">
+                                        <option value="vivienda">Vivienda</option>
+                                        <option value="alimentacion">Alimentación</option>
+                                        <option value="transporte">Transporte</option>
+                                        <option value="entretenimiento">Entretenimiento</option>
+                                        <option value="salud">Salud</option>
+                                        <option value="educacion">Educación</option>
+                                        <option value="otros_gastos">Otros Gastos</option>
+                                    </ng-container>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold text-muted">Fecha</label>
+                                <input type="date" formControlName="fecha" class="form-control">
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label small fw-semibold text-muted">Descripción (Opcional)</label>
+                                <input type="text" formControlName="descripcion" class="form-control" placeholder="Ej: Supermercado">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100 py-2 rounded-3 fw-bold" [disabled]="financeForm.invalid || isSubmitting">
+                                <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2"></span>
+                                {{ isSubmitting ? 'Guardando...' : 'Guardar Registro' }}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Tabla de registros recientes -->
+                <div class="col-md-8">
+                    <div class="p-4 rounded-4 border bg-white shadow-sm h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h6 class="fw-bold mb-0">Registros Recientes</h6>
+                            <div class="input-group" style="width: 250px;">
+                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-search"></i></span>
+                                <input type="text" class="form-control border-start-0 ps-0 bg-light" placeholder="Buscar...">
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead class="table-light small text-muted">
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Descripción</th>
+                                        <th>Categoría</th>
+                                        <th class="text-end">Monto</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                    <tr *ngIf="isLoading">
+                                        <td colspan="5" class="text-center py-4 text-muted">
+                                            <span class="spinner-border spinner-border-sm me-2"></span> Cargando registros...
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="!isLoading && recentRecords.length === 0">
+                                        <td colspan="5" class="text-center py-4 text-muted">
+                                            No hay registros todavía. ¡Añade tu primer movimiento!
+                                        </td>
+                                    </tr>
+                                    <tr *ngFor="let record of recentRecords">
+                                        <td class="small">{{ record.fecha | date:'dd MMM yyyy' }}</td>
+                                        <td class="fw-semibold small">{{ record.descripcion || 'Sin descripción' }}</td>
+                                        <td>
+                                            <span class="badge" [ngClass]="{'bg-success': record.tipo === 'ingreso', 'bg-warning text-dark': record.tipo === 'gasto' && record.categoria === 'alimentacion', 'bg-danger': record.tipo === 'gasto' && record.categoria !== 'alimentacion'}">
+                                                {{ record.categoria | titlecase }}
+                                            </span>
+                                        </td>
+                                        <td class="text-end fw-bold" [ngClass]="{'text-success': record.tipo === 'ingreso', 'text-danger': record.tipo === 'gasto'}">
+                                            {{ record.tipo === 'ingreso' ? '+' : '-' }}{{ record.monto | currency }}
+                                        </td>
+                                        <td><button class="btn btn-sm btn-light text-muted" (click)="financeService.deleteFinance(record._id!).subscribe({next: loadRecentRecords.bind(this)})"><i class="bi bi-trash"></i></button></td>
+                                    </tr>
+                            </table>
+                        </div>
+                        
+                        <div class="text-center mt-3">
+                            <button class="btn btn-link text-muted small">Cargar más registros...</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>

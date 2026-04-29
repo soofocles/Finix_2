@@ -1,0 +1,135 @@
+<div class="auth-wrapper">
+
+  <!-- ===== LEFT PANEL ===== -->
+  <div class="auth-left">
+    <a class="auth-brand" routerLink="/">
+      <div class="auth-brand-icon">
+        <i class="bi bi-play-circle-fill"></i>
+      </div>
+      <span class="auth-brand-name">Finix</span>
+    </a>
+
+    <div class="auth-left-content">
+      <h2 class="auth-left-title">
+        Empieza hoy,<br>sin costo 🚀
+      </h2>
+      <p class="auth-left-subtitle">
+        Crea tu cuenta en segundos y comienza a gestionar tus finanzas de forma inteligente y segura.
+      </p>
+      <ul class="auth-features">
+        <li>
+          <span class="feat-icon"><i class="bi bi-person-check"></i></span>
+          Registro rápido, sin tarjeta requerida
+        </li>
+        <li>
+          <span class="feat-icon"><i class="bi bi-pie-chart"></i></span>
+          Análisis automático de tus gastos
+        </li>
+        <li>
+          <span class="feat-icon"><i class="bi bi-calendar-check"></i></span>
+          Recordatorios de tus pagos programados
+        </li>
+      </ul>
+    </div>
+
+    <span class="auth-left-footer">© 2026 Finix · Todos los derechos reservados</span>
+  </div>
+
+  <!-- ===== RIGHT PANEL ===== -->
+  <div class="auth-right">
+    <div class="auth-form-box">
+
+      <h1 class="auth-form-title">Crear cuenta</h1>
+      <p class="auth-form-subtitle">
+        ¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a>
+      </p>
+
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <!-- Mensaje de error -->
+        @if (errorMessage) {
+          <div class="alert alert-danger py-2 small fw-semibold" role="alert">
+            {{ errorMessage }}
+          </div>
+        }
+
+        <!-- Nombre y Apellido -->
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label-custom">Nombre</label>
+            <div class="input-wrapper">
+              <i class="bi bi-person input-icon"></i>
+              <input type="text" formControlName="name" class="form-input-custom" placeholder="Tu nombre" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label-custom">Apellido</label>
+            <div class="input-wrapper">
+              <i class="bi bi-person input-icon"></i>
+              <input type="text" formControlName="lastName" class="form-input-custom" placeholder="Tu apellido" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+          <label class="form-label-custom">Correo electrónico</label>
+          <div class="input-wrapper">
+            <i class="bi bi-envelope input-icon"></i>
+            <input type="email" formControlName="email" class="form-input-custom" placeholder="tu@correo.com" />
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label class="form-label-custom">Contraseña</label>
+          <div class="input-wrapper">
+            <i class="bi bi-lock input-icon"></i>
+            <input [type]="showPassword ? 'text' : 'password'" formControlName="password" class="form-input-custom"
+              placeholder="Mínimo 8 caracteres" />
+            <button type="button" class="input-toggle" (click)="togglePassword()">
+              <i [class]="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="form-group">
+          <label class="form-label-custom">Confirmar contraseña</label>
+          <div class="input-wrapper">
+            <i class="bi bi-lock-fill input-icon"></i>
+            <input [type]="showConfirm ? 'text' : 'password'" formControlName="confirmPassword" class="form-input-custom"
+              placeholder="Repite tu contraseña" />
+            <button type="button" class="input-toggle" (click)="toggleConfirm()">
+              <i [class]="showConfirm ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+            </button>
+          </div>
+          @if (registerForm.errors?.['mismatch'] && registerForm.get('confirmPassword')?.touched) {
+            <small class="text-danger">Las contraseñas no coinciden</small>
+          }
+        </div>
+
+        <!-- Terms -->
+        <p class="terms-text">
+          Al registrarte aceptas nuestros
+          <a href="#">Términos de servicio</a> y
+          <a href="#">Política de privacidad</a>.
+        </p>
+
+        <!-- Submit -->
+        <button type="submit" class="btn-auth-submit" [disabled]="registerForm.invalid || isLoading">
+          @if (isLoading) {
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            Creando cuenta...
+          } @else {
+            Crear mi cuenta
+            <i class="bi bi-arrow-right"></i>
+          }
+        </button>
+      </form>
+
+
+
+    </div>
+  </div>
+
+</div>

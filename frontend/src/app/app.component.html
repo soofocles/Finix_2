@@ -1,0 +1,269 @@
+<div class="container-fluid p-0">
+    <div class="row g-0 min-vh-100">
+        <!-- Sidebar -->
+        <nav class="col-md-2 sidebar d-flex flex-column p-4">
+            <div class="d-flex align-items-center mb-5 brand-logo">
+                <i class="bi bi-play-circle-fill fs-3 me-2 text-white"></i>
+                <span class="fs-4 fw-bold text-white">Finix</span>
+            </div>
+            
+            <p class="text-white-50 text-uppercase small mb-3 fw-semibold">Menu</p>
+            <ul class="nav flex-column mb-auto">
+                <li class="nav-item mb-2">
+                    <a href="#" class="nav-link text-white active-link">
+                        <i class="bi bi-house-door me-3 fs-5"></i> Inicio
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="#" class="nav-link text-white-50 hover-link">
+                        <i class="bi bi-wallet2 me-3 fs-5"></i> Personal
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="#" class="nav-link text-white-50 hover-link">
+                        <i class="bi bi-briefcase me-3 fs-5"></i> Empresas
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="#" class="nav-link text-white-50 hover-link">
+                        <i class="bi bi-check-square me-3 fs-5"></i> Aprobaciones
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="#" class="nav-link text-white-50 hover-link">
+                        <i class="bi bi-gear me-3 fs-5"></i> Configuración
+                    </a>
+                </li>
+            </ul>
+
+            <p class="text-white-50 text-uppercase small mt-5 mb-3 fw-semibold">Pagos Programados</p>
+            <ul class="nav flex-column">
+                <li class="nav-item mb-3 d-flex align-items-center text-white-50 hover-link cursor-pointer">
+                    <span class="dot-indicator bg-info me-3"></span> Renta Mensual
+                </li>
+                <li class="nav-item mb-3 d-flex align-items-center text-white-50 hover-link cursor-pointer">
+                    <span class="dot-indicator bg-danger me-3"></span> Comida
+                </li>
+                <li class="nav-item mb-3 d-flex align-items-center text-white-50 hover-link cursor-pointer">
+                    <span class="dot-indicator bg-success me-3"></span> Servicios
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="col-md-7 px-5 py-4 bg-white center-panel">
+            <!-- Topbar search -->
+            <div class="d-flex align-items-center mb-5 search-bar-container w-50">
+                <i class="bi bi-search text-muted me-2"></i>
+                <input type="text" class="form-control border-0 bg-transparent shadow-none" placeholder="Buscar movimientos...">
+            </div>
+
+            <!-- Welcome Section -->
+            <div class="mb-4">
+                <h3 class="fw-bold">Bienvenido de nuevo, Usuario 👋</h3>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row g-3 mb-5">
+                <div class="col">
+                    <div class="action-card text-center p-4 border rounded-4 shadow-sm hover-shadow cursor-pointer">
+                        <div class="icon-circle bg-primary-light text-primary mx-auto mb-3">
+                            <i class="bi bi-arrow-down-circle fs-4"></i>
+                        </div>
+                        <span class="small fw-semibold text-secondary">Añadir<br>Ingreso</span>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="action-card text-center p-4 border rounded-4 shadow-sm hover-shadow cursor-pointer">
+                        <div class="icon-circle bg-info-light text-info mx-auto mb-3">
+                            <i class="bi bi-arrow-up-circle fs-4"></i>
+                        </div>
+                        <span class="small fw-semibold text-secondary">Añadir<br>Gasto</span>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="action-card text-center p-4 border rounded-4 shadow-sm hover-shadow cursor-pointer">
+                        <div class="icon-circle bg-success-light text-success mx-auto mb-3">
+                            <i class="bi bi-send fs-4"></i>
+                        </div>
+                        <span class="small fw-semibold text-secondary">Hacer<br>Transferencia</span>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="action-card text-center p-4 border rounded-4 shadow-sm hover-shadow cursor-pointer">
+                        <div class="icon-circle bg-danger-light text-danger mx-auto mb-3">
+                            <i class="bi bi-receipt fs-4"></i>
+                        </div>
+                        <span class="small fw-semibold text-secondary">Nueva<br>Factura</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart Area (Mockup) -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h6 class="fw-bold text-muted mb-1">Balance Histórico</h6>
+                    <h3 class="text-primary fw-bold mb-0">$2,350 <span class="fs-6 text-muted">USD</span></h3>
+                </div>
+                <button class="btn btn-light rounded-circle"><i class="bi bi-three-dots"></i></button>
+            </div>
+            
+            <div class="chart-container d-flex align-items-end mb-5">
+                <!-- Simple CSS bar chart mockup -->
+                <div class="w-100 d-flex justify-content-between h-100 align-items-end px-2 pt-4">
+                    <div class="bar-group d-flex flex-column align-items-center" style="height: 40%">
+                        <div class="bar bg-info mb-1" style="height: 40%"></div>
+                        <div class="bar bg-primary" style="height: 60%"></div>
+                        <span class="small text-muted mt-2">Ene</span>
+                    </div>
+                    <div class="bar-group d-flex flex-column align-items-center" style="height: 70%">
+                        <div class="bar bg-info mb-1" style="height: 50%"></div>
+                        <div class="bar bg-primary" style="height: 50%"></div>
+                        <span class="small text-muted mt-2 fw-bold text-dark">Feb</span>
+                    </div>
+                    <div class="bar-group d-flex flex-column align-items-center" style="height: 40%">
+                        <div class="bar bg-info mb-1" style="height: 30%"></div>
+                        <div class="bar bg-primary" style="height: 70%"></div>
+                        <span class="small text-muted mt-2">Mar</span>
+                    </div>
+                    <div class="bar-group d-flex flex-column align-items-center" style="height: 80%">
+                        <div class="bar bg-info mb-1" style="height: 60%"></div>
+                        <div class="bar bg-primary" style="height: 40%"></div>
+                        <span class="small text-muted mt-2">Abr</span>
+                    </div>
+                    <div class="bar-group d-flex flex-column align-items-center" style="height: 60%">
+                        <div class="bar bg-info mb-1" style="height: 20%"></div>
+                        <div class="bar bg-primary" style="height: 80%"></div>
+                        <span class="small text-muted mt-2">May</span>
+                    </div>
+                        <div class="bar-group d-flex flex-column align-items-center" style="height: 45%">
+                        <div class="bar bg-info mb-1" style="height: 30%"></div>
+                        <div class="bar bg-primary" style="height: 70%"></div>
+                        <span class="small text-muted mt-2">Jun</span>
+                    </div>
+                    <div class="bar-group d-flex flex-column align-items-center" style="height: 35%">
+                        <div class="bar bg-info mb-1" style="height: 20%"></div>
+                        <div class="bar bg-primary" style="height: 80%"></div>
+                        <span class="small text-muted mt-2">Jul</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contacts / Accounts List -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex align-items-center">
+                    <img src="https://ui-avatars.com/api/?name=E+P&background=random&color=fff" class="rounded-circle me-3" width="45" height="45">
+                    <div>
+                        <h6 class="mb-0 fw-bold">Eleanor Pena</h6>
+                        <small class="text-muted">eleanor@mail.com</small>
+                    </div>
+                </div>
+                <div class="text-end me-4">
+                    <small class="text-muted d-block">Cuenta</small>
+                    <span class="fw-semibold text-secondary">12345678901</span>
+                </div>
+                <button class="btn text-muted"><i class="bi bi-three-dots"></i></button>
+            </div>
+            
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex align-items-center">
+                    <img src="https://ui-avatars.com/api/?name=G+B&background=random&color=fff" class="rounded-circle me-3" width="45" height="45">
+                    <div>
+                        <h6 class="mb-0 fw-bold">Gunther Beard</h6>
+                        <small class="text-muted">gunther@mail.com</small>
+                    </div>
+                </div>
+                <div class="text-end me-4">
+                    <small class="text-muted d-block">Cuenta</small>
+                    <span class="fw-semibold text-secondary">34567896123</span>
+                </div>
+                <div>
+                    <button class="btn btn-light rounded-circle me-1 shadow-sm"><i class="bi bi-pencil"></i></button>
+                    <button class="btn btn-light rounded-circle shadow-sm"><i class="bi bi-gear"></i></button>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Right Panel -->
+        <aside class="col-md-3 bg-body-tertiary p-4 right-panel">
+            <div class="d-flex justify-content-end align-items-center mb-5">
+                <button class="btn btn-link text-muted position-relative me-3 p-0">
+                    <i class="bi bi-bell fs-5"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
+                </button>
+                <img src="https://ui-avatars.com/api/?name=F+M&background=random&color=fff" class="rounded-circle me-2" width="40" height="40">
+                <span class="fw-semibold small cursor-pointer">Fleece Marigold <i class="bi bi-chevron-down ms-1 text-muted"></i></span>
+            </div>
+
+            <!-- Balance Card -->
+            <div class="balance-card p-4 rounded-4 text-white mb-4 shadow-lg position-relative overflow-hidden">
+                <!-- Decorative shapes -->
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                
+                <div class="position-relative z-1">
+                    <p class="mb-1 opacity-75 small">Balance</p>
+                    <h2 class="fw-bold mb-4 fs-1">$4,678.45</h2>
+                    <div class="d-flex justify-content-between opacity-75 small mb-1 tracking-wide">
+                        <span>2864 **** **** 4392</span>
+                    </div>
+                    <div class="d-flex justify-content-between mt-3 small">
+                        <span>Válido Hasta<br>12/24</span>
+                        <span>CVV<br>***</span>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary w-100 rounded-pill py-3 fw-bold mb-5 btn-add-card shadow">
+                AÑADIR NUEVA TARJETA
+            </button>
+
+            <!-- Recent Transactions -->
+            <h6 class="fw-bold mb-4">Transacciones Recientes</h6>
+            
+            <p class="text-muted small text-uppercase mb-3 fw-semibold">Hoy</p>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex align-items-center">
+                    <div class="icon-circle-sm bg-primary-light text-primary me-3">
+                        <i class="bi bi-bag-check"></i>
+                    </div>
+                    <span class="fw-semibold small text-secondary">Compras Generales</span>
+                </div>
+                <span class="text-danger fw-bold small">-$180.50</span>
+            </div>
+
+            <p class="text-muted small text-uppercase mb-3 mt-4 fw-semibold">Ayer</p>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex align-items-center">
+                    <div class="icon-circle-sm bg-danger-light text-danger me-3">
+                        <i class="bi bi-lightning-charge"></i>
+                    </div>
+                    <span class="fw-semibold small text-secondary">Factura de Luz</span>
+                </div>
+                <span class="text-danger fw-bold small">-$150.00</span>
+            </div>
+            
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex align-items-center">
+                    <div class="icon-circle-sm bg-success-light text-success me-3">
+                        <i class="bi bi-arrow-down-left"></i>
+                    </div>
+                    <span class="fw-semibold small text-secondary">Ingreso de Dylan</span>
+                </div>
+                <span class="text-success fw-bold small">+$456.90</span>
+            </div>
+            
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex align-items-center">
+                    <div class="icon-circle-sm bg-danger-light text-danger me-3">
+                        <i class="bi bi-send"></i>
+                    </div>
+                    <span class="fw-semibold small text-secondary">Transferencia a Thomas</span>
+                </div>
+                <span class="text-danger fw-bold small">-$235.50</span>
+            </div>
+
+        </aside>
+    </div>
+</div>
