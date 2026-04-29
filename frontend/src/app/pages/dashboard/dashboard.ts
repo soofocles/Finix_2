@@ -32,7 +32,7 @@ export class Dashboard implements OnInit {
 
     // Load Analysis
     this.financeService.getAnalysis().subscribe({
-      next: (res) => {
+      next: (res: any) => {
         if (res.success && res.data) {
           this.analysis = {
             totalIngresos: res.data.totalIngresos || 0,
@@ -43,18 +43,18 @@ export class Dashboard implements OnInit {
           };
         }
       },
-      error: (err) => console.error('Error loading analysis', err)
+      error: (err: any) => console.error('Error loading analysis', err)
     });
 
     // Load recent records
     this.financeService.getFinances(1, 5).subscribe({
-      next: (res) => {
+      next: (res: any) => {
         if (res.success) {
           this.recentRecords = res.data;
         }
         this.isLoading = false;
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error loading records', err);
         this.isLoading = false;
       }

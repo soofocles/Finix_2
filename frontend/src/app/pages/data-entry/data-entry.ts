@@ -20,7 +20,7 @@ export class DataEntry implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private financeService: FinanceService
+    public financeService: FinanceService
   ) {
     this.financeForm = this.fb.group({
       tipo: ['ingreso', Validators.required],
@@ -38,13 +38,13 @@ export class DataEntry implements OnInit {
   loadRecentRecords(): void {
     this.isLoading = true;
     this.financeService.getFinances(1, 10).subscribe({
-      next: (res) => {
+      next: (res: any) => {
         if (res.success) {
           this.recentRecords = res.data;
         }
         this.isLoading = false;
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error loading records', err);
         this.isLoading = false;
       }
@@ -64,7 +64,7 @@ export class DataEntry implements OnInit {
     formData.monto = Number(formData.monto);
 
     this.financeService.createFinance(formData).subscribe({
-      next: (res) => {
+      next: (res: any) => {
         this.isSubmitting = false;
         if (res.success) {
           this.successMessage = 'Registro guardado exitosamente';
@@ -81,7 +81,7 @@ export class DataEntry implements OnInit {
           setTimeout(() => this.successMessage = '', 3000);
         }
       },
-      error: (err) => {
+      error: (err: any) => {
         this.isSubmitting = false;
         this.errorMessage = err.error?.message || 'Error al guardar el registro';
       }

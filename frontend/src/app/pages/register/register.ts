@@ -47,15 +47,23 @@ export class Register {
     const { confirmPassword, ...userData } = this.registerForm.value;
 
     this.authService.register({ ...userData, passwordConfirm: confirmPassword }).subscribe({
-      next: (res) => {
+      next: (res: any) => {
         this.isLoading = false;
         if (res.success) {
           this.router.navigate(['/dashboard']);
         }
       },
-      error: (err) => {
+      error: (err: any) => {
         this.isLoading = false;
-        this.errorMessage = err.error?.message || 'Error al crear la cuenta';
+        if (err.status === 0) {
+          this.errorMessage = 'No se pudo conectar al servidor. ¿Está el backend encendido?';
+        } else if (err.status === 429) {
+          this.errorMessage = err.error?.message || 'Demasiados intentos. Intente más tarde.';
+        } else if (err.status === 409) {
+          this.errorMessage = err.error?.message || 'El correo ya está registrado.';
+        } else {
+          this.errorMessage = err.error?.message || 'Error al crear la cuenta. Intente de nuevo.';
+        }
       }
     });
   }

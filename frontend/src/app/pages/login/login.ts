@@ -37,15 +37,21 @@ export class Login {
     this.errorMessage = '';
 
     this.authService.login(this.loginForm.value).subscribe({
-      next: (res) => {
+      next: (res: any) => {
         this.isLoading = false;
         if (res.success) {
           this.router.navigate(['/dashboard']);
         }
       },
-      error: (err) => {
+      error: (err: any) => {
         this.isLoading = false;
-        this.errorMessage = err.error?.message || 'Error al iniciar sesión';
+        if (err.status === 0) {
+          this.errorMessage = 'No se pudo conectar al servidor. ¿Está el backend encendido?';
+        } else if (err.status === 429) {
+          this.errorMessage = err.error?.message || 'Demasiados intentos. Espere unos minutos.';
+        } else {
+          this.errorMessage = err.error?.message || 'Error al iniciar sesión. Verifique sus datos.';
+        }
       }
     });
   }

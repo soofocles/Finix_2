@@ -45,9 +45,9 @@ const router = express.Router();
  */
 const loginLimiter = rateLimit({
     windowMs:               15 * 60 * 1000,  // 15 minutos
-    max:                    15,
+    max:                    process.env.NODE_ENV === 'development' ? 100 : 15,
     skipSuccessfulRequests: true,
-    standardHeaders:        true,             // Expone X-RateLimit-* headers
+    standardHeaders:        true,
     legacyHeaders:          false,
     message: {
         success: false,
@@ -62,7 +62,7 @@ const loginLimiter = rateLimit({
  */
 const registerLimiter = rateLimit({
     windowMs:        60 * 60 * 1000,  // 1 hora
-    max:             5,
+    max:             process.env.NODE_ENV === 'development' ? 100 : 5,
     standardHeaders: true,
     legacyHeaders:   false,
     message: {
