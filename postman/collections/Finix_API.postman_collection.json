@@ -1,0 +1,965 @@
+{
+  "info": {
+    "name": "Finix API",
+    "_postman_id": "finix-api-collection",
+    "description": "Colección completa para probar la API de Finix. Incluye Auth, Usuarios, Finanzas Personales y Finanzas Empresariales.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "🔐 Auth",
+      "item": [
+        {
+          "name": "Registrar usuario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const json = pm.response.json();",
+                  "  if (json.token) pm.environment.set('token', json.token);",
+                  "  if (json.refreshToken) pm.environment.set('refresh_token', json.refreshToken);",
+                  "  if (json.data && json.data._id) pm.environment.set('user_id', json.data._id);",
+                  "  pm.test('Registro exitoso', () => pm.response.to.have.status(201));",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Juan Pérez\",\n  \"email\": \"juan@example.com\",\n  \"password\": \"Password123!\",\n  \"passwordConfirm\": \"Password123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const json = pm.response.json();",
+                  "  if (json.token) pm.environment.set('token', json.token);",
+                  "  if (json.refreshToken) pm.environment.set('refresh_token', json.refreshToken);",
+                  "  if (json.data && json.data._id) pm.environment.set('user_id', json.data._id);",
+                  "  pm.test('Login exitoso', () => pm.response.to.have.status(200));",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"juan@example.com\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Mi perfil (GET /me)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/auth/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Refresh token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const json = pm.response.json();",
+                  "  if (json.token) pm.environment.set('token', json.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/refresh",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "refresh"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/auth/logout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "logout"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Health Check",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/health",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "health"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "👤 Usuarios",
+      "item": [
+        {
+          "name": "Ver mi perfil",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/users/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "me"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Actualizar mi perfil (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Juan Pérez Actualizado\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "me"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Cambiar contraseña",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"Password123!\",\n  \"newPassword\": \"NuevaPass456!\",\n  \"newPasswordConfirm\": \"NuevaPass456!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/me/password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "me",
+                "password"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Eliminar mi cuenta",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/api/users/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "me"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[Admin] Listar todos los usuarios",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/users",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[Admin] Ver usuario por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/users/{{user_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{user_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[Admin] Editar usuario por ID",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Nombre Modificado por Admin\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/{{user_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{user_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[Admin] Activar / Desactivar usuario",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"active\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/{{user_id}}/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{user_id}}",
+                "status"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[Superadmin] Eliminar usuario",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/api/users/{{user_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{user_id}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "💰 Finanzas Personales",
+      "item": [
+        {
+          "name": "Listar transacciones",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/personal-finance",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "personal-finance"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Crear transacción (Ingreso)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const json = pm.response.json();",
+                  "  if (json.data && json.data._id) pm.environment.set('finance_id', json.data._id);",
+                  "  pm.test('Transacción creada', () => pm.response.to.have.status(201));",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"ingreso\",\n  \"monto\": 1500000,\n  \"moneda\": \"COP\",\n  \"categoria\": \"salario\",\n  \"descripcion\": \"Pago de nómina mayo\",\n  \"metodoPago\": \"transferencia_bancaria\",\n  \"estado\": \"completado\",\n  \"tags\": [\"trabajo\", \"mensual\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/personal-finance",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "personal-finance"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Crear transacción (Gasto)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"gasto\",\n  \"monto\": 85000,\n  \"moneda\": \"COP\",\n  \"categoria\": \"alimentacion\",\n  \"descripcion\": \"Mercado semanal\",\n  \"metodoPago\": \"tarjeta_debito\",\n  \"estado\": \"completado\",\n  \"tags\": [\"hogar\", \"comida\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/personal-finance",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "personal-finance"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener transacción por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/personal-finance/{{finance_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "personal-finance",
+                "{{finance_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Actualizar transacción (PUT)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"monto\": 1600000,\n  \"descripcion\": \"Pago de nómina mayo (corregido)\",\n  \"tags\": [\"trabajo\", \"mensual\", \"actualizado\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/personal-finance/{{finance_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "personal-finance",
+                "{{finance_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Eliminar transacción (soft-delete)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/api/personal-finance/{{finance_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "personal-finance",
+                "{{finance_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "📊 Análisis financiero",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/personal-finance/analysis",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "personal-finance",
+                "analysis"
+              ]
+            }
+          }
+        },
+        {
+          "name": "🤖 Predicción (IA)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/personal-finance/prediction",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "personal-finance",
+                "prediction"
+              ]
+            }
+          }
+        },
+        {
+          "name": "🔮 Simulación (IA)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/personal-finance/simulation",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "personal-finance",
+                "simulation"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🏢 Finanzas Empresariales",
+      "item": [
+        {
+          "name": "Listar transacciones",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/business-finance",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "business-finance"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Crear transacción (borrador)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const json = pm.response.json();",
+                  "  if (json.data && json.data._id) pm.environment.set('business_id', json.data._id);",
+                  "  pm.test('Transacción empresarial creada', () => pm.response.to.have.status(201));",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"factura_venta\",\n  \"monto\": 5000000,\n  \"moneda\": \"COP\",\n  \"descripcion\": \"Factura de venta cliente XYZ\",\n  \"cliente\": \"Cliente XYZ S.A.S\",\n  \"fechaVencimiento\": \"2026-05-31\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/business-finance",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "business-finance"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener transacción por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/business-finance/{{business_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "business-finance",
+                "{{business_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Actualizar borrador (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"monto\": 5500000,\n  \"descripcion\": \"Factura corregida cliente XYZ\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/business-finance/{{business_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "business-finance",
+                "{{business_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Eliminar (soft-delete)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/api/business-finance/{{business_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "business-finance",
+                "{{business_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Enviar a aprobación",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/business-finance/{{business_id}}/submit",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "business-finance",
+                "{{business_id}}",
+                "submit"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[Admin] Aprobar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"comentario\": \"Aprobado por gerencia\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/business-finance/{{business_id}}/approve",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "business-finance",
+                "{{business_id}}",
+                "approve"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[Admin] Rechazar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"comentario\": \"Falta documentación de soporte\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/business-finance/{{business_id}}/reject",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "business-finance",
+                "{{business_id}}",
+                "reject"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[Contador] Contabilizar (post al ledger)",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/business-finance/{{business_id}}/post",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "business-finance",
+                "{{business_id}}",
+                "post"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[Contador] Generar reverso contable",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"motivo\": \"Error en monto original\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/business-finance/{{business_id}}/reverse",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "business-finance",
+                "{{business_id}}",
+                "reverse"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Aplicar pago",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"monto\": 2500000,\n  \"metodoPago\": \"transferencia_bancaria\",\n  \"referencia\": \"TRF-2026-001\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/business-finance/{{business_id}}/payments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "business-finance",
+                "{{business_id}}",
+                "payments"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Recalcular impuestos",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/business-finance/{{business_id}}/taxes/recalculate",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "business-finance",
+                "{{business_id}}",
+                "taxes",
+                "recalculate"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Aprobaciones pendientes",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/business-finance/approvals/pending",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "business-finance",
+                "approvals",
+                "pending"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Vencidas por cobrar",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/business-finance/overdue/cobrar",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "business-finance",
+                "overdue",
+                "cobrar"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Vencidas por pagar",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/business-finance/overdue/pagar",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "business-finance",
+                "overdue",
+                "pagar"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
