@@ -18,7 +18,7 @@ export class Dashboard implements OnInit {
   };
   recentRecords: FinanceRecord[] = [];
   isLoading = true;
-  userName = 'Usuario'; // To be updated when user profile is integrated
+  userName = ''; // populated from profile when integrated
 
   constructor(private financeService: FinanceService) {}
 

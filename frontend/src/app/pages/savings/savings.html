@@ -1,0 +1,35 @@
+<div class="container p-3">
+  <h4>Metas de Ahorro</h4>
+
+  <form (ngSubmit)="create()" [formGroup]="form" class="mb-3">
+    <div class="row g-2">
+      <div class="col-md-5">
+        <input formControlName="titulo" class="form-control" placeholder="Título de la meta">
+      </div>
+      <div class="col-md-3">
+        <input type="number" formControlName="montoObjetivo" class="form-control" placeholder="Monto objetivo">
+      </div>
+      <div class="col-md-3">
+        <input type="date" formControlName="fechaObjetivo" class="form-control">
+      </div>
+      <div class="col-md-1">
+        <button class="btn btn-primary w-100" type="submit">Crear</button>
+      </div>
+    </div>
+  </form>
+
+  <div *ngIf="isLoading">Cargando...</div>
+  <ul class="list-group" *ngIf="!isLoading">
+    <li class="list-group-item" *ngFor="let g of goals">
+      <div class="d-flex justify-content-between">
+        <div>
+          <strong>{{ g.titulo }}</strong>
+          <div class="text-muted small">Objetivo: {{ g.montoObjetivo | number:'1.2-2' }}</div>
+        </div>
+        <div>
+          <small class="text-muted">Actual: {{ g.montoActual | number:'1.2-2' }}</small>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>

@@ -39,7 +39,7 @@
         </nav>
 
         <!-- ===== MAIN CONTENT ===== -->
-        <main class="col-md-10 px-5 py-4 bg-white center-panel" style="border-radius: 40px 0 0 40px;">
+        <main class="col-md-10 px-5 py-4 bg-white center-panel">
             
             <div class="mb-5 d-flex justify-content-between align-items-center">
                 <div>
@@ -47,10 +47,10 @@
                     <p class="text-muted small">Actualiza tu información personal y de seguridad.</p>
                 </div>
                 <div class="d-flex align-items-center gap-3">
-                    <img src="https://ui-avatars.com/api/?name=U+F&background=4c3cfa&color=fff" class="rounded-circle" width="50" height="50">
+                    <img src="https://ui-avatars.com/api/?name=+&background=4c3cfa&color=fff" class="rounded-circle" width="50" height="50" alt="avatar">
                     <div>
-                        <h6 class="mb-0 fw-bold">Usuario Finix</h6>
-                        <small class="text-muted">usuario@correo.com</small>
+                        <h6 class="mb-0 fw-bold"></h6>
+                        <small class="text-muted"></small>
                     </div>
                 </div>
             </div>
@@ -67,19 +67,19 @@
                             <div class="row g-3">
                                 <div class="col-sm-6">
                                     <label class="form-label small fw-semibold text-muted">Nombre</label>
-                                    <input type="text" class="form-control" value="Usuario" placeholder="Tu nombre">
+                                    <input type="text" class="form-control" placeholder="Tu nombre">
                                 </div>
                                 <div class="col-sm-6">
                                     <label class="form-label small fw-semibold text-muted">Apellido</label>
-                                    <input type="text" class="form-control" value="Finix" placeholder="Tu apellido">
+                                    <input type="text" class="form-control" placeholder="Tu apellido">
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label small fw-semibold text-muted">Correo Electrónico</label>
-                                    <input type="email" class="form-control" value="usuario@correo.com" placeholder="ejemplo@correo.com">
+                                    <input type="email" class="form-control" placeholder="ejemplo@correo.com">
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label small fw-semibold text-muted">Moneda Principal</label>
-                                    <select class="form-select">
+                                    <select class="form-select" aria-label="Moneda Principal">
                                         <option value="USD">USD ($)</option>
                                         <option value="EUR">EUR (€)</option>
                                         <option value="COP">COP ($)</option>
@@ -89,6 +89,39 @@
                                     <button type="button" class="btn btn-primary px-4 py-2 rounded-3 w-100 fw-bold">
                                         Guardar Cambios
                                     </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Apariencia / Tema -->
+                <div class="col-md-6">
+                    <div class="p-4 rounded-4 border bg-white shadow-sm h-100">
+                        <h5 class="fw-bold mb-4 d-flex align-items-center">
+                            <i class="bi bi-palette text-info me-2"></i> Apariencia
+                        </h5>
+
+                        <form (ngSubmit)="saveTheme()" #themeForm="ngForm">
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <label class="form-label small fw-semibold text-muted">Color primario</label>
+                                    <input name="primaryColor" [(ngModel)]="theme.primaryColor" type="color" class="form-control form-control-color" title="Color primario" />
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label small fw-semibold text-muted">Fondo</label>
+                                    <input name="background" [(ngModel)]="theme.background" type="color" class="form-control form-control-color" title="Color de fondo" />
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label small fw-semibold text-muted">Tamaño de fuente</label>
+                                    <select name="fontSize" [(ngModel)]="theme.fontSize" class="form-select" title="Tamaño de fuente">
+                                        <option value="14px">Pequeña</option>
+                                        <option value="16px">Normal</option>
+                                        <option value="18px">Grande</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 mt-4">
+                                    <button type="submit" class="btn btn-primary w-100">Guardar Apariencia</button>
                                 </div>
                             </div>
                         </form>

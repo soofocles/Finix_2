@@ -1,0 +1,24 @@
+<div class="container p-3">
+  <h4>Programaciones de Pago</h4>
+
+  <form (ngSubmit)="create()" [formGroup]="form" class="mb-3">
+    <div class="row g-2">
+      <div class="col-md-4"><input formControlName="titulo" class="form-control" placeholder="Título"></div>
+      <div class="col-md-3"><input type="number" formControlName="monto" class="form-control" placeholder="Monto"></div>
+      <div class="col-md-3"><select formControlName="frecuencia" class="form-select"><option value="mensual">Mensual</option><option value="semanal">Semanal</option></select></div>
+      <div class="col-md-2"><button class="btn btn-primary w-100" type="submit">Crear</button></div>
+    </div>
+  </form>
+
+  <div *ngIf="isLoading">Cargando...</div>
+  <ul class="list-group" *ngIf="!isLoading">
+    <li class="list-group-item" *ngFor="let s of schedules">
+      <div class="d-flex justify-content-between">
+        <div>
+          <strong>{{ s.titulo }}</strong>
+          <div class="text-muted small">Monto: {{ s.monto | number:'1.2-2' }}</div>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>

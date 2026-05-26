@@ -1,34 +1,45 @@
-/* Google Fonts */
-body {
-    font-family: 'Inter', sans-serif;
-}
-
-/* Color Palette */
+/* ─────────────────────────────────────────────────────────────────
+   GLOBAL VARIABLES & THEME
+   ───────────────────────────────────────────────────────────────── */
 :root {
-    --primary-color: #4c3cfa;
+    /* Themeable variables (updated by ThemeService) */
+    --finix-primary: #4c3cfa;
+    --finix-background: #ffffff;
+    --finix-font-size: 16px;
+
+    /* Backwards-compatible aliases */
+    --primary-color: var(--finix-primary);
     --primary-light: #ecebff;
     --info-light: #e6f6ff;
     --success-light: #e8f9ee;
     --danger-light: #ffeff1;
-    --sidebar-bg: #4c3cfa;
+    --sidebar-bg: var(--finix-primary);
 }
 
-.text-primary { color: var(--primary-color) !important; }
-.bg-primary { background-color: var(--primary-color) !important; }
-.text-success { color: #20c997 !important; }
-.text-danger { color: #ff6b6b !important; }
-.text-info { color: #0dcaf0 !important; }
+/* ─────────────────────────────────────────────────────────────────
+   GLOBAL STYLES
+   ───────────────────────────────────────────────────────────────── */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--finix-background);
+    font-size: var(--finix-font-size);
+    margin: 0;
+    padding: 0;
+}
 
-/* Sidebar Specifics */
+/* ─────────────────────────────────────────────────────────────────
+   SIDEBAR STYLES
+   ───────────────────────────────────────────────────────────────── */
 .sidebar {
-    background-color: var(--sidebar-bg);
-    border-top-right-radius: 40px;
     border-bottom-right-radius: 40px;
     box-shadow: 10px 0 20px rgba(0,0,0,0.05);
     z-index: 10;
     position: relative;
 }
 
+/* ─────────────────────────────────────────────────────────────────
+   NAVIGATION LINKS
+   ───────────────────────────────────────────────────────────────── */
 .nav-link {
     padding-left: 0;
     transition: all 0.3s ease;
@@ -64,7 +75,9 @@ body {
     display: inline-block;
 }
 
-/* Center Panel */
+/* ─────────────────────────────────────────────────────────────────
+   CENTER PANEL
+   ───────────────────────────────────────────────────────────────── */
 .center-panel {
     border-radius: 40px 0 0 40px;
     margin-left: -30px; /* Slight overlap effect */
@@ -82,7 +95,9 @@ body {
     box-shadow: none;
 }
 
-/* Action Cards */
+/* ─────────────────────────────────────────────────────────────────
+   ACTION CARDS & UTILITIES
+   ───────────────────────────────────────────────────────────────── */
 .cursor-pointer {
     cursor: pointer;
 }
@@ -114,12 +129,15 @@ body {
     justify-content: center;
 }
 
+/* Background Color Utilities */
 .bg-primary-light { background-color: var(--primary-light); }
 .bg-info-light { background-color: var(--info-light); }
 .bg-success-light { background-color: var(--success-light); }
 .bg-danger-light { background-color: var(--danger-light); }
 
-/* Right Panel */
+/* ─────────────────────────────────────────────────────────────────
+   RIGHT PANEL & CARDS
+   ───────────────────────────────────────────────────────────────── */
 .right-panel {
     z-index: 0;
     border-left: 1px solid #eee;
@@ -165,7 +183,9 @@ body {
     background-color: #3b2bc0;
 }
 
-/* Chart Mockup */
+/* ─────────────────────────────────────────────────────────────────
+   CHARTS & GRAPHS
+   ───────────────────────────────────────────────────────────────── */
 .chart-container {
     height: 250px;
     border-bottom: 2px solid #eee;
@@ -180,7 +200,9 @@ body {
     width: 30px;
 }
 
-/* KPI Cards */
+/* ─────────────────────────────────────────────────────────────────
+   KPI CARDS
+   ───────────────────────────────────────────────────────────────── */
 .kpi-card {
     border-radius: 20px !important;
     border-color: #f0eeff !important;

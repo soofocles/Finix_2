@@ -1,0 +1,22 @@
+<div class="container p-3">
+  <h4>Deudas</h4>
+  <form (ngSubmit)="create()" [formGroup]="form" class="mb-3">
+    <div class="row g-2">
+      <div class="col-md-5"><input formControlName="acreedor" class="form-control" placeholder="Acreedor"></div>
+      <div class="col-md-4"><input type="number" formControlName="principal" class="form-control" placeholder="Principal"></div>
+      <div class="col-md-3"><button class="btn btn-primary w-100" type="submit">Agregar</button></div>
+    </div>
+  </form>
+
+  <div *ngIf="isLoading">Cargando...</div>
+  <ul class="list-group" *ngIf="!isLoading">
+    <li class="list-group-item" *ngFor="let d of debts">
+      <div class="d-flex justify-content-between">
+        <div>
+          <strong>{{ d.acreedor }}</strong>
+          <div class="text-muted small">Saldo: {{ d.saldo | number:'1.2-2' }}</div>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>

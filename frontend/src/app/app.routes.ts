@@ -6,6 +6,9 @@ import { Register } from './pages/register/register';
 import { Profile } from './pages/profile/profile';
 import { Reports } from './pages/reports/reports';
 import { DataEntry } from './pages/data-entry/data-entry';
+import { Savings } from './pages/savings/savings';
+import { Debts } from './pages/debts/debts';
+import { Schedules } from './pages/schedules/schedules';
 import { ForgotPassword } from './pages/forgot-password/forgot-password';
 import { authGuard } from './core/guards/auth.guard';
 
@@ -16,6 +19,9 @@ export const routes: Routes = [
   { path: 'forgot-password', component: ForgotPassword },
   { path: 'dashboard', component: Dashboard, canActivate: [authGuard] },
   { path: 'profile', component: Profile, canActivate: [authGuard] },
+  { path: 'savings', component: Savings, canActivate: [authGuard] },
+  { path: 'debts', component: Debts, canActivate: [authGuard] },
+  { path: 'schedules', component: Schedules, canActivate: [authGuard] },
   { path: 'reports', component: Reports, canActivate: [authGuard] },
   { path: 'data-entry', component: DataEntry, canActivate: [authGuard] },
   { path: '**', redirectTo: '' }

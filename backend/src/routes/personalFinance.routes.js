@@ -4,6 +4,9 @@ const mongoose = require('mongoose');
 const rateLimit = require('express-rate-limit');
 
 const financeController = require('../controllers/personalFinance.controller');
+const savingsController = require('../controllers/savings.controller');
+const debtsController = require('../controllers/debts.controller');
+const schedulesController = require('../controllers/schedules.controller');
 const auth = require('../middlewares/auth.middleware');
 
 /**
@@ -73,6 +76,28 @@ router.get('/analysis', logAccess, financeController.getAnalysis);
 router.get('/prediction', logAccess, burstLimiter, aiLimiter, financeController.getPrediction);
 router.get('/simulation', logAccess, burstLimiter, aiLimiter, financeController.getSimulation);
 
+
+// --- Sub-resources: savings goals, debts, payment schedules
+router.get('/savings', savingsController.getAll);
+router.post('/savings', savingsController.create);
+router.get('/savings/:id', validateObjectId('id'), savingsController.getById);
+router.put('/savings/:id', validateObjectId('id'), savingsController.update);
+router.post('/savings/:id/contribute', validateObjectId('id'), savingsController.addContribution);
+router.delete('/savings/:id', validateObjectId('id'), savingsController.delete);
+
+router.get('/debts', debtsController.getAll);
+router.post('/debts', debtsController.create);
+router.get('/debts/:id', validateObjectId('id'), debtsController.getById);
+router.put('/debts/:id', validateObjectId('id'), debtsController.update);
+router.post('/debts/:id/pay', validateObjectId('id'), debtsController.applyPayment);
+router.delete('/debts/:id', validateObjectId('id'), debtsController.delete);
+
+router.get('/schedules', schedulesController.getAll);
+router.post('/schedules', schedulesController.create);
+router.get('/schedules/:id', validateObjectId('id'), schedulesController.getById);
+router.put('/schedules/:id', validateObjectId('id'), schedulesController.update);
+router.post('/schedules/:id/execute', validateObjectId('id'), schedulesController.executeNow);
+router.delete('/schedules/:id', validateObjectId('id'), schedulesController.delete);
 
 router.get('/', financeController.getAllFinances);
 router.post('/', financeController.createFinance);
