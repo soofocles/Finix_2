@@ -25,7 +25,7 @@ export class Register {
       name: ['', [Validators.required]],
       lastName: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8)]],
+      password: ['', [Validators.required, Validators.minLength(8), Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)]],
       confirmPassword: ['', [Validators.required]]
     }, { validators: this.passwordMatchValidator });
   }
@@ -44,9 +44,10 @@ export class Register {
     this.isLoading = true;
     this.errorMessage = '';
 
-    const { confirmPassword, ...userData } = this.registerForm.value;
+    const { confirmPassword, name, lastName, ...userData } = this.registerForm.value;
+    const fullName = `${name} ${lastName}`.trim();
 
-    this.authService.register({ ...userData, passwordConfirm: confirmPassword }).subscribe({
+    this.authService.register({ ...userData, name: fullName, passwordConfirm: confirmPassword }).subscribe({
       next: (res: any) => {
         this.isLoading = false;
         if (res.success) {

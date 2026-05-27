@@ -1,4 +1,4 @@
-<div class="container-fluid p-0">
+<div class="dashboard-wrapper container-fluid p-0">
     <div class="row g-0 min-vh-100">
 
         <!-- ===== SIDEBAR ===== -->
@@ -16,6 +16,21 @@
                     </a>
                 </li>
                 <li class="nav-item mb-2">
+                    <a routerLink="/schedules" routerLinkActive="active-link" class="nav-link text-white-50 hover-link">
+                        <i class="bi bi-calendar-check me-3 fs-5"></i> Programar Pagos
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a routerLink="/debts" routerLinkActive="active-link" class="nav-link text-white-50 hover-link">
+                        <i class="bi bi-credit-card me-3 fs-5"></i> Añadir Deuda
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a routerLink="/savings" routerLinkActive="active-link" class="nav-link text-white-50 hover-link">
+                        <i class="bi bi-piggy-bank me-3 fs-5"></i> Mis Ahorros
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
                     <a routerLink="/reports" routerLinkActive="active-link" class="nav-link text-white-50 hover-link">
                         <i class="bi bi-bar-chart-line me-3 fs-5"></i> Reportes
                     </a>
@@ -25,7 +40,6 @@
                         <i class="bi bi-table me-3 fs-5"></i> Mis Datos
                     </a>
                 </li>
-
                 <li class="nav-item mb-2">
                     <a routerLink="/profile" routerLinkActive="active-link" class="nav-link text-white-50 hover-link">
                         <i class="bi bi-gear me-3 fs-5"></i> Configuración
@@ -36,27 +50,10 @@
             <button class="btn btn-outline-light mt-5 w-100 rounded-pill" routerLink="/login">
                 <i class="bi bi-box-arrow-left me-2"></i> Cerrar sesión
             </button>
-
-            <!-- Categorías activas -->
-            <p class="text-white-50 text-uppercase small mt-5 mb-3 fw-semibold">Categorías</p>
-            <ul class="nav flex-column">
-                <li class="nav-item mb-3 d-flex align-items-center text-white-50 hover-link cursor-pointer">
-                    <span class="dot-indicator bg-success me-3"></span> Ingresos
-                </li>
-                <li class="nav-item mb-3 d-flex align-items-center text-white-50 hover-link cursor-pointer">
-                    <span class="dot-indicator bg-danger me-3"></span> Gastos Fijos
-                </li>
-                <li class="nav-item mb-3 d-flex align-items-center text-white-50 hover-link cursor-pointer">
-                    <span class="dot-indicator bg-warning me-3"></span> Gastos Variables
-                </li>
-                <li class="nav-item mb-3 d-flex align-items-center text-white-50 hover-link cursor-pointer">
-                    <span class="dot-indicator bg-info me-3"></span> Ahorros
-                </li>
-            </ul>
         </nav>
 
         <!-- ===== MAIN CONTENT ===== -->
-        <main class="col-md-7 px-5 py-4 bg-white center-panel">
+        <main class="col-md-7 px-5 py-4 center-panel glass-panel">
 
             <!-- Search bar -->
             <div class="d-flex align-items-center mb-5 search-bar-container w-50">
@@ -71,22 +68,28 @@
                     <div class="placeholder-glow"><span class="placeholder col-6 rounded mt-1"></span></div>
                 </ng-container>
                 <ng-container *ngIf="!isLoading">
-                    <h3 class="fw-bold">Bienvenido de nuevo 👋</h3>
-                    <p class="text-muted small">Aquí tienes un resumen de tu situación financiera actual.</p>
-                </ng-container>
-            </div>
-
-            <!-- ===== KPI CARDS ===== -->
+    <h3 class="fw-bold text-white">Hola, {{ userName }} 👋</h3>
+    <p class="text-white-50 small">Aquí tienes un resumen de tu situación financiera actual.</p>
+</ng-container>
+</div>
+<div class="profile-top card-glass p-4 rounded-4 mb-4 d-flex align-items-center">
+    <img src="https://ui-avatars.com/api/?name={{ userName }}&background=4c3cfa&color=fff" class="rounded-circle me-3" width="60" height="60" alt="avatar">
+    <div>
+        <h4 class="text-white mb-0">Hola, {{ userName }}</h4>
+        <p class="text-white-50 mb-0">Bienvenido a tu panel financiero</p>
+    </div>
+</div>
+<!-- ===== KPI CARDS ===== -->
             <div class="row g-3 mb-5">
                 <div class="col-6">
                     <div class="kpi-card kpi-income p-4 rounded-4 border hover-shadow cursor-pointer">
                         <div class="d-flex align-items-center justify-content-between mb-3">
-                            <span class="small fw-semibold text-muted">Total Ingresos</span>
+                            <span class="small fw-semibold text-white-50">Total Ingresos</span>
                             <div class="icon-circle-sm bg-success-light text-success">
                                 <i class="bi bi-arrow-down-circle"></i>
                             </div>
                         </div>
-                        <h4 class="fw-bold mb-1" style="color:#1a1a2e">
+                        <h4 class="fw-bold mb-1 text-white">
                             <ng-container *ngIf="!isLoading">{{ analysis.totalIngresos | currency }}</ng-container>
                             <span *ngIf="isLoading" class="placeholder col-8 rounded"></span>
                         </h4>
@@ -96,45 +99,28 @@
                 <div class="col-6">
                     <div class="kpi-card p-4 rounded-4 border hover-shadow cursor-pointer">
                         <div class="d-flex align-items-center justify-content-between mb-3">
-                            <span class="small fw-semibold text-muted">Total Gastos</span>
+                            <span class="small fw-semibold text-white-50">Total Gastos</span>
                             <div class="icon-circle-sm bg-danger-light text-danger">
                                 <i class="bi bi-arrow-up-circle"></i>
                             </div>
                         </div>
-                        <h4 class="fw-bold mb-1" style="color:#1a1a2e">
+                        <h4 class="fw-bold mb-1 text-white">
                             <ng-container *ngIf="!isLoading">{{ analysis.totalGastos | currency }}</ng-container>
                             <span *ngIf="isLoading" class="placeholder col-8 rounded"></span>
                         </h4>
                         <small class="text-danger fw-semibold"><i class="bi bi-bar-chart-line me-1"></i> Total acumulado</small>
                     </div>
                 </div>
+                
                 <div class="col-6">
                     <div class="kpi-card p-4 rounded-4 border hover-shadow cursor-pointer">
                         <div class="d-flex align-items-center justify-content-between mb-3">
-                            <span class="small fw-semibold text-muted">Balance Neto</span>
-                            <div class="icon-circle-sm bg-primary-light text-primary">
-                                <i class="bi bi-wallet2"></i>
-                            </div>
-                        </div>
-                        <h4 class="fw-bold mb-1" style="color:#1a1a2e">
-                            <ng-container *ngIf="!isLoading">{{ analysis.balance | currency }}</ng-container>
-                            <span *ngIf="isLoading" class="placeholder col-8 rounded"></span>
-                        </h4>
-                        <small [ngClass]="analysis.balance >= 0 ? 'text-success' : 'text-danger'" class="fw-semibold">
-                            <i class="bi" [ngClass]="analysis.balance >= 0 ? 'bi-arrow-up-short' : 'bi-arrow-down-short'"></i>
-                            {{ analysis.balance >= 0 ? 'Superávit' : 'Déficit' }}
-                        </small>
-                    </div>
-                </div>
-                <div class="col-6">
-                    <div class="kpi-card p-4 rounded-4 border hover-shadow cursor-pointer">
-                        <div class="d-flex align-items-center justify-content-between mb-3">
-                            <span class="small fw-semibold text-muted">Tasa de Ahorro</span>
+                            <span class="small fw-semibold text-white-50">Tasa de Ahorro</span>
                             <div class="icon-circle-sm bg-info-light text-info">
                                 <i class="bi bi-piggy-bank"></i>
                             </div>
                         </div>
-                        <h4 class="fw-bold mb-1" style="color:#1a1a2e">
+                        <h4 class="fw-bold mb-1 text-white">
                             <ng-container *ngIf="!isLoading">
                                 {{ analysis.totalIngresos > 0 ? ((analysis.balance / analysis.totalIngresos) * 100 | number:'1.0-0') + '%' : 'N/A' }}
                             </ng-container>
@@ -149,10 +135,10 @@
             </div>
 
             <!-- ===== RECENT TRANSACTIONS ===== -->
-            <div class="d-flex justify-content-between align-items-center mb-3">
+            <div *ngIf="!isLoading && recentRecords.length > 0" class="d-flex justify-content-between align-items-center mb-3">
                 <div>
-                    <h6 class="fw-bold text-muted mb-1">Últimos Movimientos</h6>
-                    <h3 class="text-primary fw-bold mb-0">Registros <span class="fs-6 text-muted">· Recientes</span></h3>
+                    <h6 class="fw-bold text-white-50 mb-1">Últimos Movimientos</h6>
+                    <h3 class="text-white fw-bold mb-0">Registros <span class="fs-6 text-white-50">· Recientes</span></h3>
                 </div>
                 <a routerLink="/data-entry" class="btn btn-light btn-sm rounded-pill px-3">Ver todos</a>
             </div>
@@ -162,18 +148,14 @@
             </div>
 
             <ng-container *ngIf="!isLoading">
-                <div *ngIf="recentRecords.length === 0" class="text-center py-5 text-muted">
-                    <i class="bi bi-inbox fs-1 d-block mb-2"></i>
-                    No hay registros todavía. <a routerLink="/data-entry" class="text-primary">¡Añade tu primer movimiento!</a>
-                </div>
                 <div *ngFor="let record of recentRecords" class="d-flex align-items-center justify-content-between py-2 border-bottom">
                     <div class="d-flex align-items-center gap-3">
                         <div class="icon-circle-sm" [ngClass]="record.tipo === 'ingreso' ? 'bg-success-light text-success' : 'bg-danger-light text-danger'">
                             <i class="bi" [ngClass]="record.tipo === 'ingreso' ? 'bi-arrow-down-circle' : 'bi-arrow-up-circle'"></i>
                         </div>
                         <div>
-                            <p class="mb-0 fw-semibold small">{{ record.descripcion || 'Sin descripción' }}</p>
-                            <span class="text-muted" style="font-size:11px">{{ record.fecha | date:'dd MMM yyyy' }} · {{ record.categoria | titlecase }}</span>
+                            <p class="mb-0 fw-semibold small text-white">{{ record.descripcion || 'Sin descripción' }}</p>
+                            <span class="text-white-50" style="font-size:11px">{{ record.fecha | date:'dd MMM yyyy' }} · {{ record.categoria | titlecase }}</span>
                         </div>
                     </div>
                     <span class="fw-bold small" [ngClass]="record.tipo === 'ingreso' ? 'text-success' : 'text-danger'">
@@ -184,73 +166,6 @@
 
         </main>
 
-        <!-- ===== RIGHT PANEL ===== -->
-        <aside class="col-md-3 bg-body-tertiary p-4 right-panel">
-
-            <!-- User bar -->
-            <div class="d-flex justify-content-end align-items-center mb-5">
-                <button class="btn btn-link text-muted position-relative me-3 p-0">
-                    <i class="bi bi-bell fs-5"></i>
-                </button>
-                <img src="https://ui-avatars.com/api/?name=U+F&background=4c3cfa&color=fff" class="rounded-circle me-2" width="40" height="40">
-                <span class="fw-semibold small cursor-pointer">Mi Cuenta <i class="bi bi-chevron-down ms-1 text-muted"></i></span>
-            </div>
-
-            <!-- Balance neto destacado -->
-            <div class="balance-card p-4 rounded-4 text-white mb-4 shadow-lg position-relative overflow-hidden">
-                <div class="shape shape-1"></div>
-                <div class="shape shape-2"></div>
-                <div class="position-relative z-1">
-                    <p class="mb-1 opacity-75 small">Balance Neto</p>
-                    <h2 class="fw-bold mb-3 fs-1">
-                        <ng-container *ngIf="!isLoading">{{ analysis.balance | currency }}</ng-container>
-                        <span *ngIf="isLoading" class="placeholder col-8 rounded bg-white opacity-25"></span>
-                    </h2>
-                    <div class="d-flex justify-content-between small opacity-75">
-                        <div>
-                            <p class="mb-0 opacity-75" style="font-size:11px">INGRESOS</p>
-                            <span class="fw-bold">{{ isLoading ? '...' : (analysis.totalIngresos | currency) }}</span>
-                        </div>
-                        <div class="text-end">
-                            <p class="mb-0 opacity-75" style="font-size:11px">GASTOS</p>
-                            <span class="fw-bold">{{ isLoading ? '...' : (analysis.totalGastos | currency) }}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Desglose por categoría -->
-            <h6 class="fw-bold mb-4">Desglose por Categoría</h6>
-
-            <!-- Loading state -->
-            <div *ngIf="isLoading" class="text-center text-muted py-3">
-                <span class="spinner-border spinner-border-sm"></span>
-            </div>
-
-            <!-- Empty state -->
-            <div *ngIf="!isLoading && (!analysis.gastoPorCategoria || getCategoryKeys().length === 0)" class="text-center text-muted py-3">
-                <i class="bi bi-bar-chart fs-3 d-block mb-2"></i>
-                <small>Registra gastos para ver el desglose.</small>
-            </div>
-
-            <!-- Dynamic categories from real data -->
-            <ng-container *ngIf="!isLoading && analysis.gastoPorCategoria">
-                <div *ngFor="let cat of getCategoryKeys()" class="d-flex justify-content-between align-items-center mb-3">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="icon-circle-sm bg-danger-light text-danger">
-                            <i class="bi bi-tag"></i>
-                        </div>
-                        <div>
-                            <p class="mb-0 fw-semibold small">{{ cat | titlecase }}</p>
-                            <div class="progress mt-1" style="height:4px;width:80px">
-                                <div class="progress-bar bg-danger" [style.width]="getCategoryPercent(cat) + '%'"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <span class="fw-bold small text-muted">{{ analysis.gastoPorCategoria![cat] | currency }}</span>
-                </div>
-            </ng-container>
-
-        </aside>
     </div>
 </div>
+

@@ -1,0 +1,72 @@
+/* Premium Glassmorphism Theme - Reports */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+.dashboard-wrapper {
+  font-family: 'Outfit', sans-serif;
+  background: #0f0c29;
+  background: linear-gradient(to right, #24243e, #302b63, #0f0c29);
+  color: white;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Glowing Orbs */
+.dashboard-wrapper::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  left: 20%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(139,92,246,0.2) 0%, rgba(139,92,246,0) 70%);
+  border-radius: 50%;
+  filter: blur(60px);
+  z-index: 0;
+  pointer-events: none;
+  animation: float 10s ease-in-out infinite alternate;
+}
+
+/* Base panels */
+.sidebar {
+  background: rgba(20, 16, 40, 0.4);
+  backdrop-filter: blur(12px);
+  border-right: 1px solid rgba(255,255,255,0.05);
+  z-index: 1;
+}
+
+.center-panel {
+  background: transparent !important;
+  z-index: 1;
+}
+
+.card-glass {
+  background: rgba(255,255,255,0.05) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  color: white;
+}
+
+.table-glass {
+  color: white;
+}
+.table-glass th, .table-glass td {
+  background: transparent !important;
+  border-bottom-color: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.8);
+}
+.table-glass thead th {
+  color: rgba(255,255,255,0.5);
+  border-bottom: 2px solid rgba(255,255,255,0.1);
+}
+
+.text-muted {
+  color: rgba(255,255,255,0.5) !important;
+}
+
+/* Form selects */
+.form-select-glass {
+  background-color: rgba(255,255,255,0.1) !important;
+  border: 1px solid rgba(255,255,255,0.2) !important;
+  color: white !important;
+}

@@ -90,9 +90,21 @@
               <i [class]="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
             </button>
           </div>
-          <small class="text-muted" style="font-size:0.78rem; margin-top:4px; display:block;">
-            Debe tener 8+ caracteres, una mayúscula, una minúscula y un número.
-          </small>
+          @if (registerForm.get('password')?.invalid && (registerForm.get('password')?.touched || registerForm.get('password')?.dirty)) {
+            <small class="text-danger" style="font-size:0.78rem; margin-top:4px; display:block;">
+              @if (registerForm.get('password')?.errors?.['required']) {
+                La contraseña es requerida.
+              } @else if (registerForm.get('password')?.errors?.['minlength']) {
+                Debe tener al menos 8 caracteres.
+              } @else if (registerForm.get('password')?.errors?.['pattern']) {
+                Falta mayúscula, minúscula o número.
+              }
+            </small>
+          } @else {
+            <small class="text-muted" style="font-size:0.78rem; margin-top:4px; display:block;">
+              Debe tener 8+ caracteres, una mayúscula, una minúscula y un número.
+            </small>
+          }
         </div>
 
 

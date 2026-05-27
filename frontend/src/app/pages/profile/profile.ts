@@ -6,7 +6,8 @@ import { ThemeService, ThemePrefs } from '../../core/services/theme.service';
 @Component({
   selector: 'app-profile',
   imports: [RouterLink, RouterLinkActive, FormsModule],
-  templateUrl: './profile.html'
+  templateUrl: './profile.html',
+  styleUrl: './profile.css'
 })
 export class Profile {
   theme: ThemePrefs = { primaryColor: '', background: '', fontSize: '' };

@@ -1,4 +1,4 @@
-<div class="container-fluid p-0">
+<div class="dashboard-wrapper container-fluid p-0">
     <div class="row g-0 min-vh-100">
 
         <!-- ===== SIDEBAR ===== -->
@@ -16,6 +16,21 @@
                     </a>
                 </li>
                 <li class="nav-item mb-2">
+                    <a routerLink="/schedules" routerLinkActive="active-link" class="nav-link text-white-50 hover-link">
+                        <i class="bi bi-calendar-check me-3 fs-5"></i> Programar Pagos
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a routerLink="/debts" routerLinkActive="active-link" class="nav-link text-white-50 hover-link">
+                        <i class="bi bi-credit-card me-3 fs-5"></i> Añadir Deuda
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a routerLink="/savings" routerLinkActive="active-link" class="nav-link text-white-50 hover-link">
+                        <i class="bi bi-piggy-bank me-3 fs-5"></i> Mis Ahorros
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
                     <a routerLink="/reports" routerLinkActive="active-link" class="nav-link text-white-50 hover-link">
                         <i class="bi bi-bar-chart-line me-3 fs-5"></i> Reportes
                     </a>
@@ -25,7 +40,6 @@
                         <i class="bi bi-table me-3 fs-5"></i> Mis Datos
                     </a>
                 </li>
-
                 <li class="nav-item mb-2">
                     <a routerLink="/profile" routerLinkActive="active-link" class="nav-link text-white active-link">
                         <i class="bi bi-gear me-3 fs-5"></i> Configuración
@@ -39,47 +53,47 @@
         </nav>
 
         <!-- ===== MAIN CONTENT ===== -->
-        <main class="col-md-10 px-5 py-4 bg-white center-panel">
+        <main class="col-md-10 px-5 py-4 center-panel" style="border-radius: 40px 0 0 40px; overflow-y: auto; max-height: 100vh;">
             
             <div class="mb-5 d-flex justify-content-between align-items-center">
                 <div>
-                    <h3 class="fw-bold">Configuración de Perfil ⚙️</h3>
-                    <p class="text-muted small">Actualiza tu información personal y de seguridad.</p>
+                    <h3 class="fw-bold text-white">Configuración de Perfil ⚙️</h3>
+                    <p class="text-white-50 small">Actualiza tu información personal y de seguridad.</p>
                 </div>
                 <div class="d-flex align-items-center gap-3">
                     <img src="https://ui-avatars.com/api/?name=+&background=4c3cfa&color=fff" class="rounded-circle" width="50" height="50" alt="avatar">
                     <div>
-                        <h6 class="mb-0 fw-bold"></h6>
-                        <small class="text-muted"></small>
+                        <h6 class="mb-0 fw-bold text-white"></h6>
+                        <small class="text-white-50"></small>
                     </div>
                 </div>
             </div>
 
-            <div class="row g-4">
+            <div class="row g-4 justify-content-center">
                 <!-- Información Personal -->
                 <div class="col-md-6">
-                    <div class="p-4 rounded-4 border bg-white shadow-sm h-100">
-                        <h5 class="fw-bold mb-4 d-flex align-items-center">
+                    <div class="p-4 rounded-4 border card-glass shadow-sm h-100">
+                        <h5 class="fw-bold mb-4 d-flex align-items-center text-white">
                             <i class="bi bi-person-badge text-primary me-2"></i> Información Personal
                         </h5>
                         
                         <form>
                             <div class="row g-3">
                                 <div class="col-sm-6">
-                                    <label class="form-label small fw-semibold text-muted">Nombre</label>
-                                    <input type="text" class="form-control" placeholder="Tu nombre">
+                                    <label class="form-label small fw-semibold text-white-50">Nombre</label>
+                                    <input type="text" class="form-control form-select-glass text-white" placeholder="Tu nombre">
                                 </div>
                                 <div class="col-sm-6">
-                                    <label class="form-label small fw-semibold text-muted">Apellido</label>
-                                    <input type="text" class="form-control" placeholder="Tu apellido">
+                                    <label class="form-label small fw-semibold text-white-50">Apellido</label>
+                                    <input type="text" class="form-control form-select-glass text-white" placeholder="Tu apellido">
                                 </div>
                                 <div class="col-12">
-                                    <label class="form-label small fw-semibold text-muted">Correo Electrónico</label>
-                                    <input type="email" class="form-control" placeholder="ejemplo@correo.com">
+                                    <label class="form-label small fw-semibold text-white-50">Correo Electrónico</label>
+                                    <input type="email" class="form-control form-select-glass text-white" placeholder="ejemplo@correo.com">
                                 </div>
                                 <div class="col-12">
-                                    <label class="form-label small fw-semibold text-muted">Moneda Principal</label>
-                                    <select class="form-select" aria-label="Moneda Principal">
+                                    <label class="form-label small fw-semibold text-white-50">Moneda Principal</label>
+                                    <select class="form-select form-select-glass text-white" aria-label="Moneda Principal">
                                         <option value="USD">USD ($)</option>
                                         <option value="EUR">EUR (€)</option>
                                         <option value="COP">COP ($)</option>
@@ -95,59 +109,26 @@
                     </div>
                 </div>
 
-                <!-- Apariencia / Tema -->
-                <div class="col-md-6">
-                    <div class="p-4 rounded-4 border bg-white shadow-sm h-100">
-                        <h5 class="fw-bold mb-4 d-flex align-items-center">
-                            <i class="bi bi-palette text-info me-2"></i> Apariencia
-                        </h5>
-
-                        <form (ngSubmit)="saveTheme()" #themeForm="ngForm">
-                            <div class="row g-3">
-                                <div class="col-12">
-                                    <label class="form-label small fw-semibold text-muted">Color primario</label>
-                                    <input name="primaryColor" [(ngModel)]="theme.primaryColor" type="color" class="form-control form-control-color" title="Color primario" />
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label small fw-semibold text-muted">Fondo</label>
-                                    <input name="background" [(ngModel)]="theme.background" type="color" class="form-control form-control-color" title="Color de fondo" />
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label small fw-semibold text-muted">Tamaño de fuente</label>
-                                    <select name="fontSize" [(ngModel)]="theme.fontSize" class="form-select" title="Tamaño de fuente">
-                                        <option value="14px">Pequeña</option>
-                                        <option value="16px">Normal</option>
-                                        <option value="18px">Grande</option>
-                                    </select>
-                                </div>
-                                <div class="col-12 mt-4">
-                                    <button type="submit" class="btn btn-primary w-100">Guardar Apariencia</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
                 <!-- Seguridad -->
                 <div class="col-md-6">
-                    <div class="p-4 rounded-4 border bg-white shadow-sm h-100">
-                        <h5 class="fw-bold mb-4 d-flex align-items-center">
+                    <div class="p-4 rounded-4 border card-glass shadow-sm h-100">
+                        <h5 class="fw-bold mb-4 d-flex align-items-center text-white">
                             <i class="bi bi-shield-lock text-danger me-2"></i> Seguridad y Contraseña
                         </h5>
                         
                         <form>
                             <div class="row g-3">
                                 <div class="col-12">
-                                    <label class="form-label small fw-semibold text-muted">Contraseña Actual</label>
-                                    <input type="password" class="form-control" placeholder="••••••••">
+                                    <label class="form-label small fw-semibold text-white-50">Contraseña Actual</label>
+                                    <input type="password" class="form-control form-select-glass text-white" placeholder="••••••••">
                                 </div>
                                 <div class="col-12">
-                                    <label class="form-label small fw-semibold text-muted">Nueva Contraseña</label>
-                                    <input type="password" class="form-control" placeholder="••••••••">
+                                    <label class="form-label small fw-semibold text-white-50">Nueva Contraseña</label>
+                                    <input type="password" class="form-control form-select-glass text-white" placeholder="••••••••">
                                 </div>
                                 <div class="col-12">
-                                    <label class="form-label small fw-semibold text-muted">Confirmar Nueva Contraseña</label>
-                                    <input type="password" class="form-control" placeholder="••••••••">
+                                    <label class="form-label small fw-semibold text-white-50">Confirmar Nueva Contraseña</label>
+                                    <input type="password" class="form-control form-select-glass text-white" placeholder="••••••••">
                                 </div>
                                 
                                 <div class="col-12 mt-4">

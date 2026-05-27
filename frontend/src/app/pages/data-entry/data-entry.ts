@@ -8,7 +8,8 @@ import { CommonModule } from '@angular/common';
   selector: 'app-data-entry',
   standalone: true,
   imports: [RouterLink, RouterLinkActive, ReactiveFormsModule, CommonModule],
-  templateUrl: './data-entry.html'
+  templateUrl: './data-entry.html',
+  styleUrl: './data-entry.css'
 })
 export class DataEntry implements OnInit {
   financeForm: FormGroup;

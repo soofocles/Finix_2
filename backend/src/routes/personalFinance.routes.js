@@ -69,7 +69,7 @@ const validateObjectId = (...params) => (req, res, next) => {
 };
 
 
-router.use(auth); 
+router.use(auth.protect); 
 
 // --- Analytics & AI (endpoints costosos: burst + rate limit + logging)
 router.get('/analysis', logAccess, financeController.getAnalysis);
