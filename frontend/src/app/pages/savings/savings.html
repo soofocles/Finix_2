@@ -1,35 +1,177 @@
-<div class="container p-3">
-  <h4>Metas de Ahorro</h4>
+<div class="dashboard-wrapper container-fluid p-0">
+    <div class="row g-0 min-vh-100">
 
-  <form (ngSubmit)="create()" [formGroup]="form" class="mb-3">
-    <div class="row g-2">
-      <div class="col-md-5">
-        <input formControlName="titulo" class="form-control" placeholder="Título de la meta">
-      </div>
-      <div class="col-md-3">
-        <input type="number" formControlName="montoObjetivo" class="form-control" placeholder="Monto objetivo">
-      </div>
-      <div class="col-md-3">
-        <input type="date" formControlName="fechaObjetivo" class="form-control">
-      </div>
-      <div class="col-md-1">
-        <button class="btn btn-primary w-100" type="submit">Crear</button>
-      </div>
+        <!-- ===== SIDEBAR ===== -->
+        <nav class="col-md-2 sidebar d-flex flex-column p-4">
+            <div class="d-flex align-items-center mb-5 brand-logo">
+                <i class="bi bi-play-circle-fill fs-3 me-2 text-white"></i>
+                <span class="fs-4 fw-bold text-white">Finix</span>
+            </div>
+
+            <p class="text-white-50 text-uppercase small mb-3 fw-semibold">Menu</p>
+            <ul class="nav flex-column mb-auto">
+                <li class="nav-item mb-2">
+                    <a routerLink="/dashboard" class="nav-link text-white-50 hover-link">
+                        <i class="bi bi-house-door me-3 fs-5"></i> Inicio
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a routerLink="/schedules" class="nav-link text-white-50 hover-link">
+                        <i class="bi bi-calendar-check me-3 fs-5"></i> Programar Pagos
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a routerLink="/debts" class="nav-link text-white-50 hover-link">
+                        <i class="bi bi-credit-card me-3 fs-5"></i> Añadir Deuda
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a routerLink="/savings" class="nav-link text-white active-link">
+                        <i class="bi bi-piggy-bank me-3 fs-5"></i> Mis Ahorros
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a routerLink="/reports" class="nav-link text-white-50 hover-link">
+                        <i class="bi bi-bar-chart-line me-3 fs-5"></i> Reportes
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a routerLink="/data-entry" class="nav-link text-white-50 hover-link">
+                        <i class="bi bi-table me-3 fs-5"></i> Mis Datos
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a routerLink="/profile" class="nav-link text-white-50 hover-link">
+                        <i class="bi bi-gear me-3 fs-5"></i> Configuración
+                    </a>
+                </li>
+            </ul>
+
+            <button class="btn btn-outline-light mt-5 w-100 rounded-pill" routerLink="/login">
+                <i class="bi bi-box-arrow-left me-2"></i> Cerrar sesión
+            </button>
+        </nav>
+
+        <!-- ===== MAIN CONTENT ===== -->
+        <main class="col-md-10 px-5 py-4 center-panel" style="border-radius: 40px 0 0 40px; overflow-y: auto; max-height: 100vh;">
+
+            <!-- Header con Perfil del Usuario arriba a la derecha -->
+            <div class="d-flex justify-content-between align-items-center mb-5">
+                <div>
+                    <h3 class="fw-bold text-white">Mis Metas de Ahorro 🐷</h3>
+                    <p class="text-white-50 small">Visualiza y gestiona tus objetivos de ahorro a corto, mediano y largo plazo.</p>
+                </div>
+                <div class="d-flex align-items-center gap-3 bg-white bg-opacity-10 py-2 px-3 rounded-pill border border-white border-opacity-10">
+                    <img src="https://ui-avatars.com/api/?name={{ userName }}&background=4c3cfa&color=fff" class="rounded-circle" width="40" height="40" alt="avatar">
+                    <div>
+                        <h6 class="mb-0 fw-bold text-white small">{{ userName }}</h6>
+                        <small class="text-white-50" style="font-size: 10px;">Usuario Finix</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Columna Izquierda: Lista de metas -->
+                <div class="col-md-8">
+                    <div *ngIf="isLoading" class="py-5 text-center">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <p class="text-white-50 small mt-2">Cargando tus metas...</p>
+                    </div>
+
+                    <div *ngIf="!isLoading && goals.length === 0" class="p-5 text-center card-glass rounded-4 mb-4">
+                        <i class="bi bi-piggy-bank text-white-50 fs-1 mb-3 d-block"></i>
+                        <h5 class="fw-bold text-white">Aún no tienes metas de ahorro</h5>
+                        <p class="text-white-50 small mb-0">Usa el formulario de la derecha para definir tu primer objetivo financiero.</p>
+                    </div>
+
+                    <div *ngIf="!isLoading && goals.length > 0" class="row g-3">
+                        <div class="col-md-6" *ngFor="let goal of goals">
+                            <div class="card-glass p-4 rounded-4 shadow-sm h-100 d-flex flex-column justify-content-between">
+                                <div>
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <h5 class="fw-bold text-white mb-0">{{ goal.titulo }}</h5>
+                                        <button class="btn btn-link text-danger p-0 border-0" (click)="deleteGoal(goal._id!)">
+                                            <i class="bi bi-trash fs-5"></i>
+                                        </button>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-baseline mb-2">
+                                        <span class="text-white-50 small">Actual: <strong>{{ goal.montoActual | currency }}</strong></span>
+                                        <span class="text-white small">Objetivo: {{ goal.montoObjetivo | currency }}</span>
+                                    </div>
+                                    <div class="progress rounded-pill bg-white bg-opacity-10 mb-3" style="height: 10px;">
+                                        <div class="progress-bar bg-success rounded-pill" role="progressbar" 
+                                             [style.width.%]="getProgress(goal)"
+                                             [attr.aria-valuenow]="getProgress(goal)" aria-valuemin="0" aria-valuemax="100">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <span class="badge bg-success-light text-success rounded-pill px-2 py-1 small">
+                                            {{ getProgress(goal) }}% Alcanzado
+                                        </span>
+                                        <span class="text-white-50 small" *ngIf="goal.fechaObjetivo" style="font-size: 11px;">
+                                            Meta: {{ goal.fechaObjetivo | date:'dd/MM/yyyy' }}
+                                        </span>
+                                    </div>
+                                    <button class="btn btn-primary w-100 rounded-pill btn-sm fw-bold py-2 shadow-sm" (click)="openContribution(goal._id!)">
+                                        <i class="bi bi-plus-circle me-2"></i> Realizar Aporte
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Columna Derecha: Formulario para crear meta -->
+                <div class="col-md-4">
+                    <div class="p-4 rounded-4 border card-glass shadow-sm">
+                        <h5 class="fw-bold text-white mb-4"><i class="bi bi-plus-circle text-primary me-2"></i> Crear Meta</h5>
+                        <form [formGroup]="form" (ngSubmit)="create()">
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold text-white-50">Título de la meta</label>
+                                <input formControlName="titulo" class="form-control form-select-glass text-white" placeholder="Ej. Computadora nueva">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold text-white-50">Monto objetivo</label>
+                                <input type="number" formControlName="montoObjetivo" class="form-control form-select-glass text-white" placeholder="Ej. 1200">
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label small fw-semibold text-white-50">Fecha objetivo (opcional)</label>
+                                <input type="date" formControlName="fechaObjetivo" class="form-control form-select-glass text-white">
+                            </div>
+                            <button class="btn btn-primary w-100 rounded-pill py-2 fw-bold" type="submit" [disabled]="form.invalid">
+                                <i class="bi bi-piggy-bank me-2"></i> Crear Objetivo
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== MODAL DE APORTE RÁPIDO (GLASSMORPHIC BACKDROP) ===== -->
+            <div class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);" *ngIf="showContributionModal">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content card-glass border border-white border-opacity-10 text-white rounded-4 shadow-lg p-3">
+                        <div class="modal-header border-0">
+                            <h5 class="modal-title fw-bold text-white">💸 Aportar a tu Meta de Ahorro</h5>
+                            <button type="button" class="btn-close btn-close-white" (click)="closeContribution()"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form [formGroup]="contributionForm" (ngSubmit)="submitContribution()">
+                                <div class="mb-4">
+                                    <label class="form-label small fw-semibold text-white-50">¿Cuánto dinero quieres aportar?</label>
+                                    <input type="number" formControlName="monto" class="form-control form-select-glass text-white" placeholder="Ej. 50" autofocus>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-outline-light rounded-pill flex-fill" (click)="closeContribution()">Cancelar</button>
+                                    <button type="submit" class="btn btn-primary rounded-pill flex-fill fw-bold" [disabled]="contributionForm.invalid">Abonar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
     </div>
-  </form>
-
-  <div *ngIf="isLoading">Cargando...</div>
-  <ul class="list-group" *ngIf="!isLoading">
-    <li class="list-group-item" *ngFor="let g of goals">
-      <div class="d-flex justify-content-between">
-        <div>
-          <strong>{{ g.titulo }}</strong>
-          <div class="text-muted small">Objetivo: {{ g.montoObjetivo | number:'1.2-2' }}</div>
-        </div>
-        <div>
-          <small class="text-muted">Actual: {{ g.montoActual | number:'1.2-2' }}</small>
-        </div>
-      </div>
-    </li>
-  </ul>
 </div>

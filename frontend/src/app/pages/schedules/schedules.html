@@ -1,24 +1,159 @@
-<div class="container p-3">
-  <h4>Programaciones de Pago</h4>
+<div class="dashboard-wrapper container-fluid p-0">
+    <div class="row g-0 min-vh-100">
 
-  <form (ngSubmit)="create()" [formGroup]="form" class="mb-3">
-    <div class="row g-2">
-      <div class="col-md-4"><input formControlName="titulo" class="form-control" placeholder="Título"></div>
-      <div class="col-md-3"><input type="number" formControlName="monto" class="form-control" placeholder="Monto"></div>
-      <div class="col-md-3"><select formControlName="frecuencia" class="form-select"><option value="mensual">Mensual</option><option value="semanal">Semanal</option></select></div>
-      <div class="col-md-2"><button class="btn btn-primary w-100" type="submit">Crear</button></div>
+         <!-- ===== SIDEBAR ===== -->
+         <nav class="col-md-2 sidebar d-flex flex-column p-4">
+            <div class="d-flex align-items-center mb-5 brand-logo">
+                <i class="bi bi-play-circle-fill fs-3 me-2 text-white"></i>
+                <span class="fs-4 fw-bold text-white">Finix</span>
+            </div>
+
+            <p class="text-white-50 text-uppercase small mb-3 fw-semibold">Menu</p>
+            <ul class="nav flex-column mb-auto">
+                <li class="nav-item mb-2">
+                    <a routerLink="/dashboard" class="nav-link text-white-50 hover-link">
+                        <i class="bi bi-house-door me-3 fs-5"></i> Inicio
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a routerLink="/schedules" class="nav-link text-white active-link">
+                        <i class="bi bi-calendar-check me-3 fs-5"></i> Programar Pagos
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a routerLink="/debts" class="nav-link text-white-50 hover-link">
+                        <i class="bi bi-credit-card me-3 fs-5"></i> Añadir Deuda
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a routerLink="/savings" class="nav-link text-white-50 hover-link">
+                        <i class="bi bi-piggy-bank me-3 fs-5"></i> Mis Ahorros
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a routerLink="/reports" class="nav-link text-white-50 hover-link">
+                        <i class="bi bi-bar-chart-line me-3 fs-5"></i> Reportes
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a routerLink="/data-entry" class="nav-link text-white-50 hover-link">
+                        <i class="bi bi-table me-3 fs-5"></i> Mis Datos
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a routerLink="/profile" class="nav-link text-white-50 hover-link">
+                        <i class="bi bi-gear me-3 fs-5"></i> Configuración
+                    </a>
+                </li>
+            </ul>
+
+            <button class="btn btn-outline-light mt-5 w-100 rounded-pill" routerLink="/login">
+                <i class="bi bi-box-arrow-left me-2"></i> Cerrar sesión
+            </button>
+        </nav>
+
+        <!-- ===== MAIN CONTENT ===== -->
+        <main class="col-md-10 px-5 py-4 center-panel" style="border-radius: 40px 0 0 40px; overflow-y: auto; max-height: 100vh;">
+
+            <!-- Header con Perfil del Usuario arriba a la derecha -->
+            <div class="d-flex justify-content-between align-items-center mb-5">
+                <div>
+                    <h3 class="fw-bold text-white">Pagos Programados 📅</h3>
+                    <p class="text-white-50 small">Planifica tus facturas recurrentes y suscripciones para mantener un control constante.</p>
+                </div>
+                <div class="d-flex align-items-center gap-3 bg-white bg-opacity-10 py-2 px-3 rounded-pill border border-white border-opacity-10">
+                    <img src="https://ui-avatars.com/api/?name={{ userName }}&background=4c3cfa&color=fff" class="rounded-circle" width="40" height="40" alt="avatar">
+                    <div>
+                        <h6 class="mb-0 fw-bold text-white small">{{ userName }}</h6>
+                        <small class="text-white-50" style="font-size: 10px;">Usuario Finix</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Columna Izquierda: Lista de programaciones -->
+                <div class="col-md-8">
+                    <div *ngIf="isLoading" class="py-5 text-center">
+                        <div class="spinner-border text-info" role="status"></div>
+                        <p class="text-white-50 small mt-2">Cargando tus programaciones...</p>
+                    </div>
+
+                    <div *ngIf="!isLoading && schedules.length === 0" class="p-5 text-center card-glass rounded-4 mb-4">
+                        <i class="bi bi-calendar-check text-white-50 fs-1 mb-3 d-block"></i>
+                        <h5 class="fw-bold text-white">No tienes pagos programados</h5>
+                        <p class="text-white-50 small mb-0">Usa el formulario de la derecha para programar tu primera factura de servicios o suscripción.</p>
+                    </div>
+
+                    <div *ngIf="!isLoading && schedules.length > 0" class="row g-3">
+                        <div class="col-md-6" *ngFor="let s of schedules">
+                            <div class="card-glass p-4 rounded-4 shadow-sm h-100 d-flex flex-column justify-content-between">
+                                <div>
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <div>
+                                            <h5 class="fw-bold text-white mb-0">{{ s.titulo }}</h5>
+                                            <span class="badge mt-2" [ngClass]="s.frecuencia === 'semanal' ? 'bg-success-light text-success' : 'bg-primary-light text-primary'">
+                                                {{ s.frecuencia | titlecase }}
+                                            </span>
+                                        </div>
+                                        <button class="btn btn-link text-danger p-0 border-0" (click)="deleteSchedule(s._id!)">
+                                            <i class="bi bi-trash fs-5"></i>
+                                        </button>
+                                    </div>
+                                    <div class="mb-3">
+                                        <span class="text-white-50 small">Importe de pago:</span>
+                                        <h3 class="fw-bold text-white mt-1">{{ s.monto | currency }}</h3>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <span class="text-white-50 small" style="font-size: 11px;">
+                                            Próximo: {{ s.fechaInicio | date:'dd/MM/yyyy' }}
+                                        </span>
+                                        <span class="badge bg-success-light text-success rounded-pill px-2 py-1 small" *ngIf="s.activa">
+                                            Activo
+                                        </span>
+                                    </div>
+                                    <button class="btn btn-primary w-100 rounded-pill btn-sm fw-bold py-2 shadow-sm" (click)="executeSchedule(s._id!)">
+                                        <i class="bi bi-check-circle me-2"></i> Pagar Ahora
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Columna Derecha: Formulario de creación -->
+                <div class="col-md-4">
+                    <div class="p-4 rounded-4 border card-glass shadow-sm">
+                        <h5 class="fw-bold text-white mb-4"><i class="bi bi-plus-circle text-info me-2"></i> Programar Pago</h5>
+                        <form [formGroup]="form" (ngSubmit)="create()">
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold text-white-50">Título / Concepto</label>
+                                <input formControlName="titulo" class="form-control form-select-glass text-white" placeholder="Ej. Renta, Netflix, Luz">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold text-white-50">Importe de pago</label>
+                                <input type="number" formControlName="monto" class="form-control form-select-glass text-white" placeholder="Ej. 15">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold text-white-50">Frecuencia</label>
+                                <select formControlName="frecuencia" class="form-select form-select-glass text-white">
+                                    <option value="mensual">Mensual</option>
+                                    <option value="semanal">Semanal</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label small fw-semibold text-white-50">Fecha de inicio / pago</label>
+                                <input type="date" formControlName="fechaInicio" class="form-control form-select-glass text-white">
+                            </div>
+                            <button class="btn btn-info w-100 rounded-pill py-2 fw-bold text-white" type="submit" [disabled]="form.invalid">
+                                <i class="bi bi-calendar-check me-2"></i> Programar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </main>
     </div>
-  </form>
-
-  <div *ngIf="isLoading">Cargando...</div>
-  <ul class="list-group" *ngIf="!isLoading">
-    <li class="list-group-item" *ngFor="let s of schedules">
-      <div class="d-flex justify-content-between">
-        <div>
-          <strong>{{ s.titulo }}</strong>
-          <div class="text-muted small">Monto: {{ s.monto | number:'1.2-2' }}</div>
-        </div>
-      </div>
-    </li>
-  </ul>
 </div>

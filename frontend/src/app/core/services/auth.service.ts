@@ -18,8 +18,13 @@ export class AuthService {
   login(credentials: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/login`, credentials).pipe(
       tap((res: any) => {
-        if (res.success && res.data && res.data.accessToken) {
-          this.setToken(res.data.accessToken);
+        if (res.success && res.data) {
+          if (res.data.accessToken) {
+            this.setToken(res.data.accessToken);
+          }
+          if (res.data.user) {
+            localStorage.setItem('user', JSON.stringify(res.data.user));
+          }
         }
       })
     );
@@ -28,8 +33,13 @@ export class AuthService {
   register(userData: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, userData).pipe(
       tap((res: any) => {
-        if (res.success && res.data && res.data.accessToken) {
-          this.setToken(res.data.accessToken);
+        if (res.success && res.data) {
+          if (res.data.accessToken) {
+            this.setToken(res.data.accessToken);
+          }
+          if (res.data.user) {
+            localStorage.setItem('user', JSON.stringify(res.data.user));
+          }
         }
       })
     );
@@ -37,6 +47,7 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     this.isAuthenticatedSubject.next(false);
   }
 
@@ -51,5 +62,30 @@ export class AuthService {
 
   hasToken(): boolean {
     return !!this.getToken();
+  }
+
+  getUser(): any {
+    const raw = localStorage.getItem('user');
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return null;
+    }
+  }
+
+  getUserName(): string {
+    const user = this.getUser();
+    return user ? user.name : 'Usuario';
+  }
+
+  getMe(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/me`).pipe(
+      tap((res: any) => {
+        if (res.success && res.data) {
+          localStorage.setItem('user', JSON.stringify(res.data));
+        }
+      })
+    );
   }
 }
