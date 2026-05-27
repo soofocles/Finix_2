@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap, timeout } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +17,7 @@ export class AuthService {
 
   login(credentials: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/login`, credentials).pipe(
+      timeout(15000),
       tap((res: any) => {
         if (res.success && res.data) {
           if (res.data.accessToken) {
@@ -32,6 +33,7 @@ export class AuthService {
 
   register(userData: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, userData).pipe(
+      timeout(15000),
       tap((res: any) => {
         if (res.success && res.data) {
           if (res.data.accessToken) {

@@ -47,7 +47,7 @@
                 </li>
             </ul>
 
-            <button class="btn btn-outline-light mt-5 w-100 rounded-pill" routerLink="/login">
+            <button class="btn btn-outline-light mt-5 w-100 rounded-pill" (click)="logout()">
                 <i class="bi bi-box-arrow-left me-2"></i> Cerrar sesión
             </button>
         </nav>
@@ -61,8 +61,8 @@
                     <h3 class="fw-bold text-white">Mis Metas de Ahorro 🐷</h3>
                     <p class="text-white-50 small">Visualiza y gestiona tus objetivos de ahorro a corto, mediano y largo plazo.</p>
                 </div>
-                <div class="d-flex align-items-center gap-3 bg-white bg-opacity-10 py-2 px-3 rounded-pill border border-white border-opacity-10">
-                    <img src="https://ui-avatars.com/api/?name={{ userName }}&background=4c3cfa&color=fff" class="rounded-circle" width="40" height="40" alt="avatar">
+                <div class="d-flex align-items-center gap-3 bg-white-opacity-10 py-2 px-3 rounded-pill border border-white-opacity-10">
+                    <img [src]="'https://ui-avatars.com/api/?name=' + userName + '&background=4c3cfa&color=fff'" class="rounded-circle" width="40" height="40" alt="avatar">
                     <div>
                         <h6 class="mb-0 fw-bold text-white small">{{ userName }}</h6>
                         <small class="text-white-50" style="font-size: 10px;">Usuario Finix</small>
@@ -86,19 +86,24 @@
 
                     <div *ngIf="!isLoading && goals.length > 0" class="row g-3">
                         <div class="col-md-6" *ngFor="let goal of goals">
-                            <div class="card-glass p-4 rounded-4 shadow-sm h-100 d-flex flex-column justify-content-between">
+                            <div class="card-glass p-4 rounded-4 shadow-sm h-100 d-flex flex-column justify-content-between" [class.border-primary]="editingGoalId === goal._id">
                                 <div>
                                     <div class="d-flex justify-content-between align-items-start mb-3">
                                         <h5 class="fw-bold text-white mb-0">{{ goal.titulo }}</h5>
-                                        <button class="btn btn-link text-danger p-0 border-0" (click)="deleteGoal(goal._id!)">
-                                            <i class="bi bi-trash fs-5"></i>
-                                        </button>
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-link text-info p-0 border-0" (click)="editGoal(goal)">
+                                                <i class="bi bi-pencil fs-5"></i>
+                                            </button>
+                                            <button class="btn btn-link text-danger p-0 border-0" (click)="deleteGoal(goal._id!)">
+                                                <i class="bi bi-trash fs-5"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                     <div class="d-flex justify-content-between align-items-baseline mb-2">
-                                        <span class="text-white-50 small">Actual: <strong>{{ goal.montoActual | currency }}</strong></span>
-                                        <span class="text-white small">Objetivo: {{ goal.montoObjetivo | currency }}</span>
+                                        <span class="text-white-50 small">Actual: <strong>{{ goal.montoActual | currency:'COP':'symbol':'1.0-0' }}</strong></span>
+                                        <span class="text-white small">Objetivo: {{ goal.montoObjetivo | currency:'COP':'symbol':'1.0-0' }}</span>
                                     </div>
-                                    <div class="progress rounded-pill bg-white bg-opacity-10 mb-3" style="height: 10px;">
+                                    <div class="progress rounded-pill bg-white-opacity-10 mb-3" style="height: 10px;">
                                         <div class="progress-bar bg-success rounded-pill" role="progressbar" 
                                              [style.width.%]="getProgress(goal)"
                                              [attr.aria-valuenow]="getProgress(goal)" aria-valuemin="0" aria-valuemax="100">
@@ -123,10 +128,14 @@
                     </div>
                 </div>
 
-                <!-- Columna Derecha: Formulario para crear meta -->
+                <!-- Columna Derecha: Formulario para crear/editar meta -->
                 <div class="col-md-4">
                     <div class="p-4 rounded-4 border card-glass shadow-sm">
-                        <h5 class="fw-bold text-white mb-4"><i class="bi bi-plus-circle text-primary me-2"></i> Crear Meta</h5>
+                        <h5 class="fw-bold text-white mb-4">
+                            <i class="bi bi-plus-circle text-primary me-2" *ngIf="!editingGoalId"></i>
+                            <i class="bi bi-pencil-square text-info me-2" *ngIf="editingGoalId"></i>
+                            {{ editingGoalId ? 'Editar Meta' : 'Crear Meta' }}
+                        </h5>
                         <form [formGroup]="form" (ngSubmit)="create()">
                             <div class="mb-3">
                                 <label class="form-label small fw-semibold text-white-50">Título de la meta</label>
@@ -134,15 +143,24 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label small fw-semibold text-white-50">Monto objetivo</label>
-                                <input type="number" formControlName="montoObjetivo" class="form-control form-select-glass text-white" placeholder="Ej. 1200">
+                                <input type="text" formControlName="montoObjetivo" (input)="formatCurrencyInput($event, 'montoObjetivo')" class="form-control form-select-glass text-white" placeholder="Ej. 1.200">
+                            </div>
+                            <div class="mb-3" *ngIf="editingGoalId">
+                                <label class="form-label small fw-semibold text-white-50">Monto actual (acumulado)</label>
+                                <input type="text" formControlName="montoActual" (input)="formatCurrencyInput($event, 'montoActual')" class="form-control form-select-glass text-white" placeholder="Ej. 500">
                             </div>
                             <div class="mb-4">
                                 <label class="form-label small fw-semibold text-white-50">Fecha objetivo (opcional)</label>
                                 <input type="date" formControlName="fechaObjetivo" class="form-control form-select-glass text-white">
                             </div>
-                            <button class="btn btn-primary w-100 rounded-pill py-2 fw-bold" type="submit" [disabled]="form.invalid">
-                                <i class="bi bi-piggy-bank me-2"></i> Crear Objetivo
-                            </button>
+                            <div class="d-flex gap-2">
+                                <button *ngIf="editingGoalId" class="btn btn-outline-light rounded-pill py-2 flex-fill" type="button" (click)="cancelEdit()">
+                                    Cancelar
+                                </button>
+                                <button class="btn btn-primary rounded-pill py-2 fw-bold flex-fill" type="submit" [disabled]="form.invalid">
+                                    <i class="bi bi-piggy-bank me-2"></i> {{ editingGoalId ? 'Guardar Cambios' : 'Crear Objetivo' }}
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -160,7 +178,7 @@
                             <form [formGroup]="contributionForm" (ngSubmit)="submitContribution()">
                                 <div class="mb-4">
                                     <label class="form-label small fw-semibold text-white-50">¿Cuánto dinero quieres aportar?</label>
-                                    <input type="number" formControlName="monto" class="form-control form-select-glass text-white" placeholder="Ej. 50" autofocus>
+                                    <input type="text" formControlName="monto" (input)="formatCurrencyInput($event, 'monto', true)" class="form-control form-select-glass text-white" placeholder="Ej. 50" autofocus>
                                 </div>
                                 <div class="d-flex gap-2">
                                     <button type="button" class="btn btn-outline-light rounded-pill flex-fill" (click)="closeContribution()">Cancelar</button>

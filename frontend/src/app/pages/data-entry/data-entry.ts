@@ -18,6 +18,7 @@ export class DataEntry implements OnInit {
   isSubmitting = false;
   errorMessage = '';
   successMessage = '';
+  editingRecordId: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -25,7 +26,7 @@ export class DataEntry implements OnInit {
   ) {
     this.financeForm = this.fb.group({
       tipo: ['ingreso', Validators.required],
-      monto: ['', [Validators.required, Validators.min(0.01)]],
+      monto: ['', Validators.required],
       categoria: ['', Validators.required],
       fecha: [new Date().toISOString().substring(0, 10), Validators.required],
       descripcion: ['']
@@ -52,6 +53,63 @@ export class DataEntry implements OnInit {
     });
   }
 
+  formatCurrencyInput(event: any, controlName: string): void {
+    let inputVal = event.target.value;
+    // Remove non-digits
+    const numericVal = inputVal.replace(/\D/g, '');
+    
+    let formatted = '';
+    if (numericVal) {
+      formatted = new Intl.NumberFormat('es-CO').format(Number(numericVal));
+    }
+    
+    this.financeForm.get(controlName)?.setValue(formatted, { emitEvent: false });
+  }
+
+  editRecord(record: FinanceRecord): void {
+    this.editingRecordId = record._id || null;
+    
+    let fechaStr = '';
+    if (record.fecha) {
+      fechaStr = new Date(record.fecha).toISOString().substring(0, 10);
+    }
+
+    const formattedMonto = new Intl.NumberFormat('es-CO').format(record.monto);
+
+    this.financeForm.patchValue({
+      tipo: record.tipo,
+      monto: formattedMonto,
+      categoria: record.categoria,
+      fecha: fechaStr,
+      descripcion: record.descripcion
+    });
+  }
+
+  cancelEdit(): void {
+    this.editingRecordId = null;
+    this.financeForm.reset({
+      tipo: 'ingreso',
+      fecha: new Date().toISOString().substring(0, 10),
+      categoria: '',
+      monto: '',
+      descripcion: ''
+    });
+  }
+
+  deleteRecord(id: string): void {
+    if (confirm('¿Estás seguro de que deseas eliminar este movimiento financiero?')) {
+      this.financeService.deleteFinance(id).subscribe({
+        next: (res: any) => {
+          if (res.success) {
+            if (this.editingRecordId === id) this.cancelEdit();
+            this.loadRecentRecords();
+          }
+        },
+        error: (err) => console.error('Error deleting record', err)
+      });
+    }
+  }
+
   onSubmit(): void {
     if (this.financeForm.invalid) return;
 
@@ -59,39 +117,64 @@ export class DataEntry implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
 
-    const formData = this.financeForm.value;
+    const values = this.financeForm.value;
     
-    // Ensure monto is a number
-    formData.monto = Number(formData.monto);
+    const montoStr = String(values.monto).replace(/\./g, '');
+    const montoNum = Number(montoStr);
+    if (isNaN(montoNum) || montoNum <= 0) {
+      this.isSubmitting = false;
+      this.errorMessage = 'Monto inválido';
+      return;
+    }
 
-    this.financeService.createFinance(formData).subscribe({
-      next: (res: any) => {
-        this.isSubmitting = false;
-        if (res.success) {
-          this.successMessage = 'Registro guardado exitosamente';
-          this.financeForm.reset({
-            tipo: 'ingreso',
-            fecha: new Date().toISOString().substring(0, 10),
-            categoria: '',
-            monto: '',
-            descripcion: ''
-          });
-          // Reload the table
-          this.loadRecentRecords();
+    const formData = {
+      ...values,
+      monto: montoNum
+    };
 
-          setTimeout(() => this.successMessage = '', 3000);
+    if (this.editingRecordId) {
+      this.financeService.updateFinance(this.editingRecordId, formData).subscribe({
+        next: (res: any) => {
+          this.isSubmitting = false;
+          if (res.success) {
+            this.successMessage = 'Registro actualizado exitosamente';
+            this.cancelEdit();
+            this.loadRecentRecords();
+            setTimeout(() => this.successMessage = '', 3000);
+          }
+        },
+        error: (err: any) => {
+          this.isSubmitting = false;
+          this.errorMessage = err.error?.message || 'Error al actualizar el registro';
         }
-      },
-      error: (err: any) => {
-        this.isSubmitting = false;
-        this.errorMessage = err.error?.message || 'Error al guardar el registro';
-      }
-    });
+      });
+    } else {
+      this.financeService.createFinance(formData).subscribe({
+        next: (res: any) => {
+          this.isSubmitting = false;
+          if (res.success) {
+            this.successMessage = 'Registro guardado exitosamente';
+            this.financeForm.reset({
+              tipo: values.tipo,
+              fecha: new Date().toISOString().substring(0, 10),
+              categoria: '',
+              monto: '',
+              descripcion: ''
+            });
+            this.loadRecentRecords();
+            setTimeout(() => this.successMessage = '', 3000);
+          }
+        },
+        error: (err: any) => {
+          this.isSubmitting = false;
+          this.errorMessage = err.error?.message || 'Error al guardar el registro';
+        }
+      });
+    }
   }
 
   setTipo(tipo: 'ingreso' | 'gasto'): void {
     this.financeForm.patchValue({ tipo });
-    // Reset category when type changes as they are conceptually different
     this.financeForm.patchValue({ categoria: '' });
   }
 }

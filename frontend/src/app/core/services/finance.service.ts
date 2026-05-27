@@ -41,6 +41,10 @@ export class FinanceService {
     return this.http.get<{success: boolean, data: FinanceAnalysis}>(`${this.apiUrl}/analysis`);
   }
 
+  updateFinance(id: string, data: FinanceRecord): Observable<{success: boolean}> {
+    return this.http.put<{success: boolean}>(`${this.apiUrl}/${id}`, data);
+  }
+
   deleteFinance(id: string): Observable<{success: boolean}> {
     return this.http.delete<{success: boolean}>(`${this.apiUrl}/${id}`);
   }

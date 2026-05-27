@@ -3,11 +3,12 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { CommonModule } from '@angular/common';
 import { SavingsService, SavingsGoal } from '../../core/services/savings.service';
 import { AuthService } from '../../core/services/auth.service';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-savings',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink, RouterLinkActive],
   templateUrl: './savings.html',
   styleUrl: './savings.css'
 })
@@ -20,19 +21,22 @@ export class Savings implements OnInit {
   selectedGoalId: string | null = null;
   contributionAmount: number = 0;
   showContributionModal = false;
+  editingGoalId: string | null = null;
 
   constructor(
     private fb: FormBuilder,
     private savingsService: SavingsService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {
     this.form = this.fb.group({
       titulo: ['', Validators.required],
-      montoObjetivo: ['', [Validators.required, Validators.min(0.01)]],
+      montoObjetivo: ['', Validators.required],
+      montoActual: [''],
       fechaObjetivo: ['']
     });
     this.contributionForm = this.fb.group({
-      monto: ['', [Validators.required, Validators.min(0.01)]]
+      monto: ['', Validators.required]
     });
   }
 
@@ -54,22 +58,91 @@ export class Savings implements OnInit {
     });
   }
 
+  formatCurrencyInput(event: any, controlName: string, isContributionForm = false): void {
+    let inputVal = event.target.value;
+    // Remove non-digits
+    const numericVal = inputVal.replace(/\D/g, '');
+    
+    let formatted = '';
+    if (numericVal) {
+      formatted = new Intl.NumberFormat('es-CO').format(Number(numericVal));
+    }
+    
+    const targetForm = isContributionForm ? this.contributionForm : this.form;
+    targetForm.get(controlName)?.setValue(formatted, { emitEvent: false });
+  }
+
+  editGoal(goal: SavingsGoal): void {
+    this.editingGoalId = goal._id || null;
+    let fechaStr = '';
+    if (goal.fechaObjetivo) {
+      fechaStr = new Date(goal.fechaObjetivo).toISOString().substring(0, 10);
+    }
+
+    const formattedObjetivo = new Intl.NumberFormat('es-CO').format(goal.montoObjetivo);
+    const formattedActual = new Intl.NumberFormat('es-CO').format(goal.montoActual || 0);
+
+    this.form.patchValue({
+      titulo: goal.titulo,
+      montoObjetivo: formattedObjetivo,
+      montoActual: formattedActual,
+      fechaObjetivo: fechaStr
+    });
+  }
+
+  cancelEdit(): void {
+    this.editingGoalId = null;
+    this.form.reset();
+  }
+
   create(): void {
     if (this.form.invalid) return;
-    const data = { ...this.form.value, montoObjetivo: Number(this.form.value.montoObjetivo) };
-    this.savingsService.create(data).subscribe({
-      next: () => {
-        this.form.reset();
-        this.load();
-      },
-      error: () => {}
-    });
+    const values = this.form.value;
+    
+    const objetivoStr = String(values.montoObjetivo).replace(/\./g, '');
+    const objetivoNum = Number(objetivoStr);
+    if (isNaN(objetivoNum) || objetivoNum <= 0) return;
+
+    const data: any = {
+      titulo: values.titulo,
+      montoObjetivo: objetivoNum,
+      fechaObjetivo: values.fechaObjetivo || null
+    };
+
+    if (values.montoActual !== null && values.montoActual !== undefined && values.montoActual !== '') {
+      const actualStr = String(values.montoActual).replace(/\./g, '');
+      const actualNum = Number(actualStr);
+      if (!isNaN(actualNum)) {
+        data.montoActual = actualNum;
+      }
+    }
+
+    if (this.editingGoalId) {
+      this.savingsService.update(this.editingGoalId, data).subscribe({
+        next: () => {
+          this.cancelEdit();
+          this.load();
+        },
+        error: (err) => console.error('Error al actualizar meta', err)
+      });
+    } else {
+      this.savingsService.create(data).subscribe({
+        next: () => {
+          this.form.reset();
+          this.load();
+        },
+        error: (err) => console.error('Error al crear meta', err)
+      });
+    }
   }
 
   deleteGoal(id: string): void {
     if (confirm('¿Estás seguro de que quieres eliminar esta meta de ahorro?')) {
       this.savingsService.delete(id).subscribe({
-        next: () => this.load(),
+        next: () => {
+          if (this.editingGoalId === id) this.cancelEdit();
+          this.load();
+        },
         error: (err) => console.error('Error al eliminar meta', err)
       });
     }
@@ -88,8 +161,12 @@ export class Savings implements OnInit {
 
   submitContribution(): void {
     if (this.contributionForm.invalid || !this.selectedGoalId) return;
-    const monto = Number(this.contributionForm.value.monto);
-    this.savingsService.contribute(this.selectedGoalId, { monto }).subscribe({
+    
+    const montoStr = String(this.contributionForm.value.monto).replace(/\./g, '');
+    const montoNum = Number(montoStr);
+    if (isNaN(montoNum) || montoNum <= 0) return;
+
+    this.savingsService.contribute(this.selectedGoalId, { monto: montoNum }).subscribe({
       next: () => {
         this.closeContribution();
         this.load();
@@ -102,5 +179,10 @@ export class Savings implements OnInit {
     if (!goal.montoObjetivo || goal.montoObjetivo === 0) return 0;
     const pct = ((goal.montoActual || 0) / goal.montoObjetivo) * 100;
     return Math.min(Math.round(pct), 100);
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }

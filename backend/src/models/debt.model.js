@@ -21,9 +21,8 @@ const debtSchema = new Schema({
     isDeleted: { type: Boolean, default: false }
 }, { timestamps: true, toJSON: { getters: true }, toObject: { getters: true } });
 
-debtSchema.pre(/^find/, function(next) {
+debtSchema.pre(/^find/, function() {
     this.where({ isDeleted: false });
-    next();
 });
 
 debtSchema.methods.applyPayment = function(personalFinanceId, monto) {

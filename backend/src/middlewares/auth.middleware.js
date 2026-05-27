@@ -186,7 +186,7 @@ class AuthMiddleware {
                     ));
                 }
 
-                req.user = decoded;
+                req.user = { ...decoded, id: decoded.userId };
                 next();
             })
             .catch(next);
@@ -201,7 +201,8 @@ class AuthMiddleware {
         if (!token) return next();
 
         try {
-            req.user = AuthMiddleware.verifyAccessToken(token);
+            const decoded = AuthMiddleware.verifyAccessToken(token);
+            req.user = { ...decoded, id: decoded.userId };
         } catch {
             // Token inválido o ausente — continúa como anónimo
         }

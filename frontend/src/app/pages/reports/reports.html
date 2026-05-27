@@ -51,6 +51,18 @@
         <!-- ===== MAIN CONTENT ===== -->
         <main class="col-md-10 px-5 py-4 center-panel" style="border-radius: 40px 0 0 40px; overflow-y: auto; max-height: 100vh;">
             
+            <!-- Header con Búsqueda y Perfil del Usuario arriba a la derecha -->
+            <div class="d-flex justify-content-between align-items-center mb-5">
+                <div></div>
+                <div class="d-flex align-items-center gap-3 bg-white-opacity-10 py-2 px-3 rounded-pill border border-white-opacity-10">
+                    <img [src]="'https://ui-avatars.com/api/?name=' + userName + '&background=4c3cfa&color=fff'" class="rounded-circle" width="40" height="40" alt="avatar">
+                    <div>
+                        <h6 class="mb-0 fw-bold text-white small">{{ userName }}</h6>
+                        <small class="text-white-50" style="font-size: 10px;">Usuario Finix</small>
+                    </div>
+                </div>
+            </div>
+
             <div class="mb-4 d-flex justify-content-between align-items-end">
                 <div>
                     <h3 class="fw-bold text-white">Reportes Financieros 📊</h3>
@@ -58,11 +70,10 @@
                 </div>
                 
                 <div class="d-flex gap-2">
-                    <select class="form-select form-select-glass shadow-sm" style="width: 150px;">
-                        <option>Año 2026</option>
-                        <option>Año 2025</option>
+                    <select class="form-select form-select-glass shadow-sm" style="width: 150px;" (change)="onYearChange($event)">
+                        <option value="2026" [selected]="selectedYear === 2026">Año 2026</option>
+                        <option value="2025" [selected]="selectedYear === 2025">Año 2025</option>
                     </select>
-                    <button class="btn btn-outline-light"><i class="bi bi-download"></i> Exportar</button>
                 </div>
             </div>
 
@@ -72,38 +83,47 @@
                     <i class="bi bi-inbox"></i>
                 </div>
                 <h4 class="text-white fw-bold mb-2">Aún no hay datos</h4>
-                <p class="text-white-50 mb-4 w-75">Tu cuenta es nueva y todavía no has registrado movimientos. Empieza a registrar tus ingresos y gastos para que podamos generar tus gráficas y reportes financieros automáticos.</p>
+                <p class="text-white-50 mb-4 w-75">Tu cuenta es nueva y todavía no has registrado movimientos para el año {{ selectedYear }}. Empieza a registrar tus ingresos y gastos en 'Mis Datos' para que podamos generar tus gráficas y reportes financieros automáticos.</p>
                 <a routerLink="/data-entry" class="btn btn-primary px-4 py-2 rounded-pill fw-bold">
                     <i class="bi bi-plus-circle me-2"></i> Añadir mi primer registro
                 </a>
             </div>
 
             <!-- Resumen Anual -->
+            <!-- Resumen Anual -->
             <div *ngIf="hasData" class="row g-3 mb-4">
                 <div class="col-md-4">
-                    <div class="p-4 rounded-4 border bg-success-light text-success border-success border-opacity-25 h-100">
-                        <span class="small fw-bold text-uppercase d-block mb-1">Ingresos Totales (Anual)</span>
-                        <h3 class="fw-bold mb-0">$98,400.00</h3>
+                    <div class="p-4 rounded-4 border card-glass border-success border-opacity-50 h-100" style="background: rgba(16, 185, 129, 0.08) !important;">
+                        <span class="small fw-bold text-success text-uppercase d-block mb-1">Ingresos Totales (Anual)</span>
+                        <h3 class="fw-bold mb-0 text-white">{{ totalIngresos | currency:'COP':'symbol':'1.0-0' }}</h3>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="p-4 rounded-4 border bg-danger-light text-danger border-danger border-opacity-25 h-100">
-                        <span class="small fw-bold text-uppercase d-block mb-1">Gastos Totales (Anual)</span>
-                        <h3 class="fw-bold mb-0">$42,250.00</h3>
+                    <div class="p-4 rounded-4 border card-glass border-danger border-opacity-50 h-100" style="background: rgba(239, 68, 68, 0.08) !important;">
+                        <span class="small fw-bold text-danger text-uppercase d-block mb-1">Gastos Totales (Anual)</span>
+                        <h3 class="fw-bold mb-0 text-white">{{ totalGastos | currency:'COP':'symbol':'1.0-0' }}</h3>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="p-4 rounded-4 border bg-primary-light text-primary border-primary border-opacity-25 h-100">
-                        <span class="small fw-bold text-uppercase d-block mb-1">Ahorro Neto (Anual)</span>
-                        <h3 class="fw-bold mb-0">$56,150.00</h3>
+                    <div class="p-4 rounded-4 border card-glass border-primary border-opacity-50 h-100" style="background: rgba(59, 130, 246, 0.08) !important;">
+                        <span class="small fw-bold text-primary text-uppercase d-block mb-1">Ahorro Neto (Anual)</span>
+                        <h3 class="fw-bold mb-0 text-white">{{ balance | currency:'COP':'symbol':'1.0-0' }}</h3>
                     </div>
+                </div>
+            </div>
+
+            <!-- Gráfica Mensual -->
+            <div *ngIf="hasData" class="card card-glass border-0 shadow-sm rounded-4 overflow-hidden mb-4 p-4">
+                <h6 class="fw-bold mb-4 text-white">Evolución Mensual ({{ selectedYear }})</h6>
+                <div style="height: 300px; width: 100%;">
+                    <canvas #monthlyChart></canvas>
                 </div>
             </div>
 
             <!-- Desglose Mensual Table -->
             <div *ngIf="hasData" class="card card-glass border-0 shadow-sm rounded-4 overflow-hidden mb-4">
                 <div class="card-header border-bottom p-4" style="background: rgba(255,255,255,0.02)">
-                    <h6 class="fw-bold mb-0 text-white">Desglose Mensual</h6>
+                    <h6 class="fw-bold mb-0 text-white">Desglose Mensual ({{ selectedYear }})</h6>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0 table-glass">
@@ -111,36 +131,20 @@
                             <tr>
                                 <th class="ps-4">Mes</th>
                                 <th>Ingresos</th>
-                                <th>Gastos Fijos</th>
-                                <th>Gastos Variables</th>
-                                <th>Ahorros</th>
+                                <th>Gastos</th>
+                                <th>Ahorros Estimados</th>
                                 <th class="pe-4 text-end">Balance Neto</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td class="ps-4 fw-semibold">Enero</td>
-                                <td class="text-success">$8,000.00</td>
-                                <td class="text-danger">$2,100.00</td>
-                                <td class="text-warning">$1,000.00</td>
-                                <td class="text-info">$4,900.00</td>
-                                <td class="pe-4 text-end fw-bold text-primary">+$4,900.00</td>
-                            </tr>
-                            <tr>
-                                <td class="ps-4 fw-semibold">Febrero</td>
-                                <td class="text-success">$8,200.00</td>
-                                <td class="text-danger">$2,100.00</td>
-                                <td class="text-warning">$1,200.00</td>
-                                <td class="text-info">$4,900.00</td>
-                                <td class="pe-4 text-end fw-bold text-primary">+$4,900.00</td>
-                            </tr>
-                            <tr>
-                                <td class="ps-4 fw-semibold">Marzo</td>
-                                <td class="text-success">$8,200.00</td>
-                                <td class="text-danger">$2,100.00</td>
-                                <td class="text-warning">$800.00</td>
-                                <td class="text-info">$5,300.00</td>
-                                <td class="pe-4 text-end fw-bold text-primary">+$5,300.00</td>
+                            <tr *ngFor="let m of desgloseMensual">
+                                <td class="ps-4 fw-semibold">{{ m.nombre }}</td>
+                                <td class="text-success">{{ m.ingresos | currency:'COP':'symbol':'1.0-0' }}</td>
+                                <td class="text-danger">{{ m.gastos | currency:'COP':'symbol':'1.0-0' }}</td>
+                                <td class="text-info">{{ m.ahorros | currency:'COP':'symbol':'1.0-0' }}</td>
+                                <td class="pe-4 text-end fw-bold" [ngClass]="m.balance >= 0 ? 'text-success' : 'text-danger'">
+                                    {{ m.balance >= 0 ? '+' : '' }}{{ m.balance | currency:'COP':'symbol':'1.0-0' }}
+                                </td>
                             </tr>
                         </tbody>
                     </table>

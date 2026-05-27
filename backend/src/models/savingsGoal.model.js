@@ -20,9 +20,8 @@ const savingsGoalSchema = new Schema({
     isDeleted: { type: Boolean, default: false }
 }, { timestamps: true, toJSON: { getters: true }, toObject: { getters: true } });
 
-savingsGoalSchema.pre(/^find/, function(next) {
+savingsGoalSchema.pre(/^find/, function() {
     this.where({ isDeleted: false });
-    next();
 });
 
 savingsGoalSchema.methods.addContribution = function(personalFinanceId, monto) {

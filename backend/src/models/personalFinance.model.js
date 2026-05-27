@@ -257,9 +257,8 @@ personalFinanceSchema.methods.softDelete = function () {
     return this.save();
 };
 
-personalFinanceSchema.pre(/^find/, function (next) {
+personalFinanceSchema.pre(/^find/, function () {
     this.where({ isDeleted: false });
-    next();
 });
 
 personalFinanceSchema.pre('aggregate', function(next) {

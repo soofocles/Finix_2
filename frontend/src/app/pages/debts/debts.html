@@ -47,7 +47,7 @@
                 </li>
             </ul>
 
-            <button class="btn btn-outline-light mt-5 w-100 rounded-pill" routerLink="/login">
+            <button class="btn btn-outline-light mt-5 w-100 rounded-pill" (click)="logout()">
                 <i class="bi bi-box-arrow-left me-2"></i> Cerrar sesión
             </button>
         </nav>
@@ -61,8 +61,8 @@
                     <h3 class="fw-bold text-white">Mis Deudas 💳</h3>
                     <p class="text-white-50 small">Registra obligaciones financieras, planifica tus pagos y mantén bajo control tu saldo total.</p>
                 </div>
-                <div class="d-flex align-items-center gap-3 bg-white bg-opacity-10 py-2 px-3 rounded-pill border border-white border-opacity-10">
-                    <img src="https://ui-avatars.com/api/?name={{ userName }}&background=4c3cfa&color=fff" class="rounded-circle" width="40" height="40" alt="avatar">
+                <div class="d-flex align-items-center gap-3 bg-white-opacity-10 py-2 px-3 rounded-pill border border-white-opacity-10">
+                    <img [src]="'https://ui-avatars.com/api/?name=' + userName + '&background=4c3cfa&color=fff'" class="rounded-circle" width="40" height="40" alt="avatar">
                     <div>
                         <h6 class="mb-0 fw-bold text-white small">{{ userName }}</h6>
                         <small class="text-white-50" style="font-size: 10px;">Usuario Finix</small>
@@ -86,22 +86,27 @@
 
                     <div *ngIf="!isLoading && debts.length > 0" class="row g-3">
                         <div class="col-md-6" *ngFor="let debt of debts">
-                            <div class="card-glass p-4 rounded-4 shadow-sm h-100 d-flex flex-column justify-content-between">
+                            <div class="card-glass p-4 rounded-4 shadow-sm h-100 d-flex flex-column justify-content-between" [class.border-primary]="editingDebtId === debt._id">
                                 <div>
                                     <div class="d-flex justify-content-between align-items-start mb-3">
                                         <div>
                                             <h5 class="fw-bold text-white mb-0">{{ debt.acreedor }}</h5>
                                             <small class="text-white-50" *ngIf="debt.descripcion" style="font-size: 11px;">{{ debt.descripcion }}</small>
                                         </div>
-                                        <button class="btn btn-link text-danger p-0 border-0" (click)="deleteDebt(debt._id!)">
-                                            <i class="bi bi-trash fs-5"></i>
-                                        </button>
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-link text-info p-0 border-0" (click)="editDebt(debt)">
+                                                <i class="bi bi-pencil fs-5"></i>
+                                            </button>
+                                            <button class="btn btn-link text-danger p-0 border-0" (click)="deleteDebt(debt._id!)">
+                                                <i class="bi bi-trash fs-5"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                     <div class="d-flex justify-content-between align-items-baseline mb-2">
-                                        <span class="text-white-50 small">Saldo restante: <strong class="text-danger">{{ debt.saldo | currency }}</strong></span>
-                                        <span class="text-white small" style="font-size: 12px;">Inicial: {{ debt.principal | currency }}</span>
+                                        <span class="text-white-50 small">Saldo restante: <strong class="text-danger">{{ debt.saldo | currency:'COP':'symbol':'1.0-0' }}</strong></span>
+                                        <span class="text-white small" style="font-size: 12px;">Inicial: {{ debt.principal | currency:'COP':'symbol':'1.0-0' }}</span>
                                     </div>
-                                    <div class="progress rounded-pill bg-white bg-opacity-10 mb-3" style="height: 8px;">
+                                    <div class="progress rounded-pill bg-white-opacity-10 mb-3" style="height: 8px;">
                                         <div class="progress-bar bg-danger rounded-pill" role="progressbar" 
                                              [style.width.%]="100 - getPaidPercent(debt)"
                                              [attr.aria-valuenow]="100 - getPaidPercent(debt)" aria-valuemin="0" aria-valuemax="100">
@@ -126,10 +131,14 @@
                     </div>
                 </div>
 
-                <!-- Columna Derecha: Formulario para añadir deuda -->
+                <!-- Columna Derecha: Formulario para añadir/editar deuda -->
                 <div class="col-md-4">
                     <div class="p-4 rounded-4 border card-glass shadow-sm">
-                        <h5 class="fw-bold text-white mb-4"><i class="bi bi-plus-circle text-danger me-2"></i> Añadir Deuda</h5>
+                        <h5 class="fw-bold text-white mb-4">
+                            <i class="bi bi-plus-circle text-danger me-2" *ngIf="!editingDebtId"></i>
+                            <i class="bi bi-pencil-square text-info me-2" *ngIf="editingDebtId"></i>
+                            {{ editingDebtId ? 'Editar Deuda' : 'Añadir Deuda' }}
+                        </h5>
                         <form [formGroup]="form" (ngSubmit)="create()">
                             <div class="mb-3">
                                 <label class="form-label small fw-semibold text-white-50">Acreedor</label>
@@ -137,15 +146,24 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label small fw-semibold text-white-50">Monto principal (inicial)</label>
-                                <input type="number" formControlName="principal" class="form-control form-select-glass text-white" placeholder="Ej. 5000">
+                                <input type="text" formControlName="principal" (input)="formatCurrencyInput($event, 'principal')" class="form-control form-select-glass text-white" placeholder="Ej. 5.000">
+                            </div>
+                            <div class="mb-3" *ngIf="editingDebtId">
+                                <label class="form-label small fw-semibold text-white-50">Saldo actual (restante)</label>
+                                <input type="text" formControlName="saldo" (input)="formatCurrencyInput($event, 'saldo')" class="form-control form-select-glass text-white" placeholder="Ej. 3.000">
                             </div>
                             <div class="mb-4">
                                 <label class="form-label small fw-semibold text-white-50">Descripción / Detalles (opcional)</label>
                                 <textarea formControlName="descripcion" class="form-control form-select-glass text-white" rows="2" placeholder="Ej. Tasa de interés 5%, Préstamo de estudios"></textarea>
                             </div>
-                            <button class="btn btn-danger w-100 rounded-pill py-2 fw-bold" type="submit" [disabled]="form.invalid">
-                                <i class="bi bi-credit-card me-2"></i> Registrar Obligación
-                            </button>
+                            <div class="d-flex gap-2">
+                                <button *ngIf="editingDebtId" class="btn btn-outline-light rounded-pill py-2 flex-fill" type="button" (click)="cancelEdit()">
+                                    Cancelar
+                                </button>
+                                <button class="btn btn-danger rounded-pill py-2 fw-bold flex-fill" type="submit" [disabled]="form.invalid">
+                                    <i class="bi bi-credit-card me-2"></i> {{ editingDebtId ? 'Guardar Cambios' : 'Registrar Obligación' }}
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -163,7 +181,7 @@
                             <form [formGroup]="paymentForm" (ngSubmit)="submitPayment()">
                                 <div class="mb-4">
                                     <label class="form-label small fw-semibold text-white-50">¿Cuánto dinero vas a abonar?</label>
-                                    <input type="number" formControlName="monto" class="form-control form-select-glass text-white" placeholder="Ej. 250" autofocus>
+                                    <input type="text" formControlName="monto" (input)="formatCurrencyInput($event, 'monto', true)" class="form-control form-select-glass text-white" placeholder="Ej. 250" autofocus>
                                 </div>
                                 <div class="d-flex gap-2">
                                     <button type="button" class="btn btn-outline-light rounded-pill flex-fill" (click)="closePayment()">Cancelar</button>

@@ -47,7 +47,7 @@
                 </li>
             </ul>
 
-            <button class="btn btn-outline-light mt-5 w-100 rounded-pill" routerLink="/login">
+            <button class="btn btn-outline-light mt-5 w-100 rounded-pill" (click)="logout()">
                 <i class="bi bi-box-arrow-left me-2"></i> Cerrar sesión
             </button>
         </nav>
@@ -61,8 +61,8 @@
                     <h3 class="fw-bold text-white">Pagos Programados 📅</h3>
                     <p class="text-white-50 small">Planifica tus facturas recurrentes y suscripciones para mantener un control constante.</p>
                 </div>
-                <div class="d-flex align-items-center gap-3 bg-white bg-opacity-10 py-2 px-3 rounded-pill border border-white border-opacity-10">
-                    <img src="https://ui-avatars.com/api/?name={{ userName }}&background=4c3cfa&color=fff" class="rounded-circle" width="40" height="40" alt="avatar">
+                <div class="d-flex align-items-center gap-3 bg-white-opacity-10 py-2 px-3 rounded-pill border border-white-opacity-10">
+                    <img [src]="'https://ui-avatars.com/api/?name=' + userName + '&background=4c3cfa&color=fff'" class="rounded-circle" width="40" height="40" alt="avatar">
                     <div>
                         <h6 class="mb-0 fw-bold text-white small">{{ userName }}</h6>
                         <small class="text-white-50" style="font-size: 10px;">Usuario Finix</small>
@@ -86,7 +86,7 @@
 
                     <div *ngIf="!isLoading && schedules.length > 0" class="row g-3">
                         <div class="col-md-6" *ngFor="let s of schedules">
-                            <div class="card-glass p-4 rounded-4 shadow-sm h-100 d-flex flex-column justify-content-between">
+                            <div class="card-glass p-4 rounded-4 shadow-sm h-100 d-flex flex-column justify-content-between" [class.border-primary]="editingScheduleId === s._id">
                                 <div>
                                     <div class="d-flex justify-content-between align-items-start mb-3">
                                         <div>
@@ -95,13 +95,18 @@
                                                 {{ s.frecuencia | titlecase }}
                                             </span>
                                         </div>
-                                        <button class="btn btn-link text-danger p-0 border-0" (click)="deleteSchedule(s._id!)">
-                                            <i class="bi bi-trash fs-5"></i>
-                                        </button>
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-link text-info p-0 border-0" (click)="editSchedule(s)">
+                                                <i class="bi bi-pencil fs-5"></i>
+                                            </button>
+                                            <button class="btn btn-link text-danger p-0 border-0" (click)="deleteSchedule(s._id!)">
+                                                <i class="bi bi-trash fs-5"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                     <div class="mb-3">
                                         <span class="text-white-50 small">Importe de pago:</span>
-                                        <h3 class="fw-bold text-white mt-1">{{ s.monto | currency }}</h3>
+                                        <h3 class="fw-bold text-white mt-1">{{ s.monto | currency:'COP':'symbol':'1.0-0' }}</h3>
                                     </div>
                                 </div>
                                 <div>
@@ -109,11 +114,11 @@
                                         <span class="text-white-50 small" style="font-size: 11px;">
                                             Próximo: {{ s.fechaInicio | date:'dd/MM/yyyy' }}
                                         </span>
-                                        <span class="badge bg-success-light text-success rounded-pill px-2 py-1 small" *ngIf="s.activa">
-                                            Activo
+                                        <span class="badge rounded-pill px-2 py-1 small animate-fade" [ngClass]="s.activa !== false ? 'bg-success-light text-success' : 'bg-secondary-light text-white-50'">
+                                            {{ s.activa !== false ? 'Activo' : 'Inactivo' }}
                                         </span>
                                     </div>
-                                    <button class="btn btn-primary w-100 rounded-pill btn-sm fw-bold py-2 shadow-sm" (click)="executeSchedule(s._id!)">
+                                    <button class="btn btn-primary w-100 rounded-pill btn-sm fw-bold py-2 shadow-sm" [disabled]="s.activa === false" (click)="executeSchedule(s._id!)">
                                         <i class="bi bi-check-circle me-2"></i> Pagar Ahora
                                     </button>
                                 </div>
@@ -122,10 +127,14 @@
                     </div>
                 </div>
 
-                <!-- Columna Derecha: Formulario de creación -->
+                <!-- Columna Derecha: Formulario de creación/edición -->
                 <div class="col-md-4">
                     <div class="p-4 rounded-4 border card-glass shadow-sm">
-                        <h5 class="fw-bold text-white mb-4"><i class="bi bi-plus-circle text-info me-2"></i> Programar Pago</h5>
+                        <h5 class="fw-bold text-white mb-4">
+                            <i class="bi bi-plus-circle text-info me-2" *ngIf="!editingScheduleId"></i>
+                            <i class="bi bi-pencil-square text-info me-2" *ngIf="editingScheduleId"></i>
+                            {{ editingScheduleId ? 'Editar Programación' : 'Programar Pago' }}
+                        </h5>
                         <form [formGroup]="form" (ngSubmit)="create()">
                             <div class="mb-3">
                                 <label class="form-label small fw-semibold text-white-50">Título / Concepto</label>
@@ -133,7 +142,7 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label small fw-semibold text-white-50">Importe de pago</label>
-                                <input type="number" formControlName="monto" class="form-control form-select-glass text-white" placeholder="Ej. 15">
+                                <input type="text" formControlName="monto" (input)="formatCurrencyInput($event, 'monto')" class="form-control form-select-glass text-white" placeholder="Ej. 15.000">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label small fw-semibold text-white-50">Frecuencia</label>
@@ -142,13 +151,22 @@
                                     <option value="semanal">Semanal</option>
                                 </select>
                             </div>
-                            <div class="mb-4">
+                            <div class="mb-3">
                                 <label class="form-label small fw-semibold text-white-50">Fecha de inicio / pago</label>
                                 <input type="date" formControlName="fechaInicio" class="form-control form-select-glass text-white">
                             </div>
-                            <button class="btn btn-info w-100 rounded-pill py-2 fw-bold text-white" type="submit" [disabled]="form.invalid">
-                                <i class="bi bi-calendar-check me-2"></i> Programar
-                            </button>
+                            <div class="mb-4 d-flex align-items-center gap-2" *ngIf="editingScheduleId">
+                                <input type="checkbox" formControlName="activa" id="activaCheck" class="form-check-input bg-dark border-secondary">
+                                <label for="activaCheck" class="form-label mb-0 small fw-semibold text-white-50">¿Esta programación está activa?</label>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button *ngIf="editingScheduleId" class="btn btn-outline-light rounded-pill py-2 flex-fill" type="button" (click)="cancelEdit()">
+                                    Cancelar
+                                </button>
+                                <button class="btn btn-info w-100 rounded-pill py-2 fw-bold text-white flex-fill" type="submit" [disabled]="form.invalid">
+                                    <i class="bi bi-calendar-check me-2"></i> {{ editingScheduleId ? 'Guardar Cambios' : 'Programar' }}
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>

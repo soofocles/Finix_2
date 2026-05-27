@@ -9,10 +9,10 @@
 
     /* Backwards-compatible aliases */
     --primary-color: var(--finix-primary);
-    --primary-light: #ecebff;
-    --info-light: #e6f6ff;
-    --success-light: #e8f9ee;
-    --danger-light: #ffeff1;
+    --primary-light: rgba(76, 60, 250, 0.15);
+    --info-light: rgba(13, 202, 240, 0.15);
+    --success-light: rgba(16, 185, 129, 0.15);
+    --danger-light: rgba(239, 68, 68, 0.15);
     --sidebar-bg: var(--finix-primary);
 }
 
@@ -205,13 +205,31 @@ body {
    ───────────────────────────────────────────────────────────────── */
 .kpi-card {
     border-radius: 20px !important;
-    border-color: #f0eeff !important;
-    background: #fff;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    backdrop-filter: blur(10px);
+    color: white !important;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 2px 10px rgba(76,60,250,0.04);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
 }
 
 .kpi-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 28px rgba(76,60,250,0.1) !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    box-shadow: 0 12px 28px rgba(76, 60, 250, 0.2) !important;
+}
+
+/* Glassmorphic Background & Border Helpers */
+.bg-white-opacity-5 {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+}
+.bg-white-opacity-10 {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+.border-white-opacity-5 {
+    border-color: rgba(255, 255, 255, 0.05) !important;
+}
+.border-white-opacity-10 {
+    border-color: rgba(255, 255, 255, 0.1) !important;
 }

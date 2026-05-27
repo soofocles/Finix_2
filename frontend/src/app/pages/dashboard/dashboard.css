@@ -66,6 +66,18 @@
   border-color: rgba(255,255,255,0.2) !important;
 }
 
+/* Base Glass Cards */
+.card-glass {
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(10px);
+  border-color: rgba(255,255,255,0.08) !important;
+  transition: all 0.3s ease;
+}
+.card-glass:hover {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.15) !important;
+}
+
 /* Search bar */
 .search-bar-container {
   background: rgba(255,255,255,0.05);

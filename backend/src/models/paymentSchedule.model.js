@@ -27,9 +27,8 @@ const paymentScheduleSchema = new Schema({
     isDeleted: { type: Boolean, default: false }
 }, { timestamps: true, toJSON: { getters: true }, toObject: { getters: true } });
 
-paymentScheduleSchema.pre(/^find/, function(next) {
+paymentScheduleSchema.pre(/^find/, function() {
     this.where({ isDeleted: false });
-    next();
 });
 
 paymentScheduleSchema.methods.deactivate = function() {
