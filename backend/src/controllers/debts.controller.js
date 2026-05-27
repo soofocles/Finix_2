@@ -1,4 +1,5 @@
 const Debt = require('../models/debt.model');
+const PersonalFinance = require('../models/personalFinance.model');
 
 const handleError = (res, error) => {
     if (error.name === 'ValidationError') return res.status(400).json({ success: false, message: error.message });
@@ -59,7 +60,25 @@ exports.applyPayment = async (req, res) => {
         if (!monto) return res.status(400).json({ success: false, message: 'Monto requerido' });
         const debt = await Debt.findOne({ _id: req.params.id, userId: req.user.id });
         if (!debt) return res.status(404).json({ success: false, message: 'Deuda no encontrada' });
-        await debt.applyPayment(personalFinanceId, monto);
+
+        let pfId = personalFinanceId;
+        if (!pfId) {
+            const tx = new PersonalFinance({
+                userId: req.user.id,
+                tipo: 'gasto',
+                monto: Number(monto),
+                moneda: 'COP',
+                categoria: 'deudas',
+                descripcion: `Abono a deuda: ${debt.acreedor}`,
+                metodoPago: 'efectivo',
+                estado: 'completado',
+                createdBy: req.user.id
+            });
+            const savedTx = await tx.save();
+            pfId = savedTx._id;
+        }
+
+        await debt.applyPayment(pfId, monto);
         res.status(200).json({ success: true, data: debt });
     } catch (error) { handleError(res, error); }
 };

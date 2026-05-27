@@ -137,53 +137,140 @@
                 </div>
             </div>
 
-            <!-- ===== SECCIÓN: RESUMEN DE FUNCIONES ===== -->
+            <!-- ===== SECCIÓN: RESUMEN DE FUNCIONES E INFORMACIÓN EN TIEMPO REAL ===== -->
             <div class="mb-5">
-                <h5 class="fw-bold text-white-50 mb-3"><i class="bi bi-grid-fill me-2 text-primary"></i> Resumen de Funciones principales</h5>
+                <h5 class="fw-bold text-white-50 mb-3"><i class="bi bi-grid-fill me-2 text-primary"></i> Control Financiero Inteligente</h5>
                 <div class="row g-4">
-                    <!-- Ahorros -->
+                    <!-- Ahorros Activos -->
                     <div class="col-md-4">
-                        <div class="p-4 rounded-4 border card-glass shadow-sm h-100 hover-shadow cursor-pointer d-flex flex-column justify-content-between" routerLink="/savings">
+                        <div class="p-4 rounded-4 border card-glass shadow-sm h-100 d-flex flex-column justify-content-between">
                             <div>
-                                <div class="icon-circle bg-primary-light text-primary mb-3">
-                                    <i class="bi bi-piggy-bank fs-3"></i>
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="icon-circle-sm bg-primary-light text-primary" style="width:36px; height:36px;">
+                                            <i class="bi bi-piggy-bank fs-5"></i>
+                                        </div>
+                                        <h5 class="fw-bold text-white mb-0" style="font-size: 15px;">Mis Ahorros</h5>
+                                    </div>
+                                    <span class="badge bg-primary-light text-primary rounded-pill px-2 py-1" style="font-size:10px;">
+                                        Objetivos
+                                    </span>
                                 </div>
-                                <h5 class="fw-bold text-white mb-2">Mis Ahorros</h5>
-                                <p class="text-white-50 small mb-4">Define metas de ahorro personalizadas, haz aportes periódicos y visualiza tu porcentaje de avance en tiempo real.</p>
+                                <p class="text-white-50 small mb-4" style="font-size: 12px;">Metas de ahorro personalizadas y porcentaje de avance actual.</p>
+                                
+                                <div *ngIf="savingsGoals.length === 0" class="py-3 text-center bg-white bg-opacity-5 rounded-3 border border-white border-opacity-5 mb-4">
+                                    <i class="bi bi-piggy-bank text-white-50 fs-4 mb-2 d-block"></i>
+                                    <p class="text-white-50 small mb-0" style="font-size:11px;">No tienes metas activas.</p>
+                                </div>
+
+                                <div *ngIf="savingsGoals.length > 0" class="d-flex flex-column gap-3 mb-4">
+                                    <div *ngFor="let goal of savingsGoals" class="p-2 rounded bg-white bg-opacity-5">
+                                        <div class="d-flex justify-content-between align-items-baseline mb-1">
+                                            <span class="fw-semibold text-white text-truncate" style="font-size:12px; max-width: 140px;">{{ goal.titulo }}</span>
+                                            <span class="text-success small fw-bold" style="font-size:11px;">{{ getProgress(goal) }}%</span>
+                                        </div>
+                                        <div class="progress rounded-pill bg-white bg-opacity-10" style="height: 6px;">
+                                            <div class="progress-bar bg-success rounded-pill" role="progressbar" 
+                                                 [style.width.%]="getProgress(goal)">
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between mt-1" style="font-size:9px;">
+                                            <span class="text-white-50">{{ goal.montoActual | currency }} ahorrado</span>
+                                            <span class="text-white-50">Meta: {{ goal.montoObjetivo | currency }}</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="d-flex align-items-center text-primary fw-bold small">
-                                Ir a Ahorros <i class="bi bi-arrow-right ms-2"></i>
-                            </div>
+                            <a routerLink="/savings" class="d-flex align-items-center text-primary fw-bold small text-decoration-none hover-link mt-auto pt-2">
+                                Ver y Aportar Ahorros <i class="bi bi-arrow-right ms-2"></i>
+                            </a>
                         </div>
                     </div>
-                    <!-- Deudas -->
+
+                    <!-- Deudas Pendientes -->
                     <div class="col-md-4">
-                        <div class="p-4 rounded-4 border card-glass shadow-sm h-100 hover-shadow cursor-pointer d-flex flex-column justify-content-between" routerLink="/debts">
+                        <div class="p-4 rounded-4 border card-glass shadow-sm h-100 d-flex flex-column justify-content-between">
                             <div>
-                                <div class="icon-circle bg-danger-light text-danger mb-3">
-                                    <i class="bi bi-credit-card-2-front fs-3"></i>
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="icon-circle-sm bg-danger-light text-danger" style="width:36px; height:36px;">
+                                            <i class="bi bi-credit-card-2-front fs-5"></i>
+                                        </div>
+                                        <h5 class="fw-bold text-white mb-0" style="font-size: 15px;">Mis Deudas</h5>
+                                    </div>
+                                    <span class="badge bg-danger-light text-danger rounded-pill px-2 py-1" style="font-size:10px;">
+                                        Pendientes
+                                    </span>
                                 </div>
-                                <h5 class="fw-bold text-white mb-2">Control de Deudas</h5>
-                                <p class="text-white-50 small mb-4">Lleva el registro de tus obligaciones pendientes y acreedores, calcula tus saldos y planifica abonos inteligentes.</p>
+                                <p class="text-white-50 small mb-4" style="font-size: 12px;">Obligaciones registradas y saldo pendiente a liquidar.</p>
+
+                                <div *ngIf="debts.length === 0" class="py-3 text-center bg-white bg-opacity-5 rounded-3 border border-white border-opacity-5 mb-4">
+                                    <i class="bi bi-check-circle text-success fs-4 mb-2 d-block"></i>
+                                    <p class="text-success small mb-0" style="font-size:11px;">¡Estás libre de deudas!</p>
+                                </div>
+
+                                <div *ngIf="debts.length > 0" class="d-flex flex-column gap-3 mb-4">
+                                    <div *ngFor="let debt of debts" class="p-2 rounded bg-white bg-opacity-5">
+                                        <div class="d-flex justify-content-between align-items-baseline mb-1">
+                                            <span class="fw-semibold text-white text-truncate" style="font-size:12px; max-width:140px;">{{ debt.acreedor }}</span>
+                                            <span class="text-danger small fw-bold" style="font-size:11px;">{{ debt.saldo | currency }}</span>
+                                        </div>
+                                        <div class="progress rounded-pill bg-white bg-opacity-10" style="height: 6px;">
+                                            <div class="progress-bar bg-danger rounded-pill" role="progressbar" 
+                                                 [style.width.%]="100 - getPaidPercent(debt)">
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between mt-1" style="font-size:9px;">
+                                            <span class="text-white-50">{{ getPaidPercent(debt) }}% pagado</span>
+                                            <span class="text-white-50">Inicial: {{ debt.principal | currency }}</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="d-flex align-items-center text-danger fw-bold small">
-                                Registrar Deuda <i class="bi bi-arrow-right ms-2"></i>
-                            </div>
+                            <a routerLink="/debts" class="d-flex align-items-center text-danger fw-bold small text-decoration-none hover-link mt-auto pt-2">
+                                Registrar o Abonar Deuda <i class="bi bi-arrow-right ms-2"></i>
+                            </a>
                         </div>
                     </div>
-                    <!-- Pagos programados -->
+
+                    <!-- Pagos Programados -->
                     <div class="col-md-4">
-                        <div class="p-4 rounded-4 border card-glass shadow-sm h-100 hover-shadow cursor-pointer d-flex flex-column justify-content-between" routerLink="/schedules">
+                        <div class="p-4 rounded-4 border card-glass shadow-sm h-100 d-flex flex-column justify-content-between">
                             <div>
-                                <div class="icon-circle bg-info-light text-info mb-3">
-                                    <i class="bi bi-calendar-check fs-3"></i>
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="icon-circle-sm bg-info-light text-info" style="width:36px; height:36px;">
+                                            <i class="bi bi-calendar-check fs-5"></i>
+                                        </div>
+                                        <h5 class="fw-bold text-white mb-0" style="font-size: 15px;">Próximos Pagos</h5>
+                                    </div>
+                                    <span class="badge bg-info-light text-info rounded-pill px-2 py-1" style="font-size:10px;">
+                                        Facturas
+                                    </span>
                                 </div>
-                                <h5 class="fw-bold text-white mb-2">Pagos Programados</h5>
-                                <p class="text-white-50 small mb-4">Planifica y automatiza el seguimiento de tus facturas recurrentes y servicios básicos de manera semanal o mensual.</p>
+                                <p class="text-white-50 small mb-4" style="font-size: 12px;">Servicios recurrentes y suscripciones programadas activas.</p>
+
+                                <div *ngIf="schedules.length === 0" class="py-3 text-center bg-white bg-opacity-5 rounded-3 border border-white border-opacity-5 mb-4">
+                                    <i class="bi bi-calendar-x text-white-50 fs-4 mb-2 d-block"></i>
+                                    <p class="text-white-50 small mb-0" style="font-size:11px;">No hay pagos programados.</p>
+                                </div>
+
+                                <div *ngIf="schedules.length > 0" class="d-flex flex-column gap-3 mb-4">
+                                    <div *ngFor="let s of schedules" class="p-2 rounded bg-white bg-opacity-5 d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <span class="fw-semibold text-white d-block text-truncate" style="font-size:12px; max-width:130px;">{{ s.titulo }}</span>
+                                            <span class="text-white-50" style="font-size:10px;">Frecuencia: {{ s.frecuencia | titlecase }}</span>
+                                        </div>
+                                        <div class="text-end">
+                                            <span class="text-info fw-bold d-block" style="font-size:12px;">{{ s.monto | currency }}</span>
+                                            <span class="text-white-50" style="font-size:9px;">{{ (s.proximaEjecucion || s.fechaInicio) | date:'dd/MM/yyyy' }}</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="d-flex align-items-center text-info fw-bold small">
+                            <a routerLink="/schedules" class="d-flex align-items-center text-info fw-bold small text-decoration-none hover-link mt-auto pt-2">
                                 Programar Pagos <i class="bi bi-arrow-right ms-2"></i>
-                            </div>
+                            </a>
                         </div>
                     </div>
                 </div>

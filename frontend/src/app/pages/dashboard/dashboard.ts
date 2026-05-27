@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { FinanceService, FinanceAnalysis, FinanceRecord } from '../../core/services/finance.service';
 import { AuthService } from '../../core/services/auth.service';
-import { SavingsService } from '../../core/services/savings.service';
-import { DebtsService } from '../../core/services/debts.service';
-import { SchedulesService } from '../../core/services/schedules.service';
+import { SavingsService, SavingsGoal } from '../../core/services/savings.service';
+import { DebtsService, Debt } from '../../core/services/debts.service';
+import { SchedulesService, Schedule } from '../../core/services/schedules.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -29,6 +29,11 @@ export class Dashboard implements OnInit {
   totalSavingsTarget = 0;
   totalDebtsAmount = 0;
   totalScheduledAmount = 0;
+
+  // Actual lists for summary widget
+  savingsGoals: SavingsGoal[] = [];
+  debts: Debt[] = [];
+  schedules: any[] = [];
 
   constructor(
     private financeService: FinanceService,
@@ -89,6 +94,7 @@ export class Dashboard implements OnInit {
     this.savingsService.getAll().subscribe({
       next: (res: any) => {
         if (res.success && res.data) {
+          this.savingsGoals = res.data.slice(0, 3); // top 3 for dashboard
           this.totalSavingsAmount = res.data.reduce((sum: number, item: any) => sum + (item.montoActual || 0), 0);
           this.totalSavingsTarget = res.data.reduce((sum: number, item: any) => sum + (item.montoObjetivo || 0), 0);
         }
@@ -98,6 +104,7 @@ export class Dashboard implements OnInit {
     this.debtsService.getAll().subscribe({
       next: (res: any) => {
         if (res.success && res.data) {
+          this.debts = res.data.slice(0, 3); // top 3 for dashboard
           this.totalDebtsAmount = res.data.reduce((sum: number, item: any) => sum + (item.saldo || 0), 0);
         }
       }
@@ -106,12 +113,26 @@ export class Dashboard implements OnInit {
     this.schedulesService.getAll().subscribe({
       next: (res: any) => {
         if (res.success && res.data) {
+          this.schedules = res.data.slice(0, 3); // top 3 for dashboard
           this.totalScheduledAmount = res.data
             .filter((item: any) => item.activa !== false)
             .reduce((sum: number, item: any) => sum + (item.monto || 0), 0);
         }
       }
     });
+  }
+
+  getProgress(goal: SavingsGoal): number {
+    if (!goal.montoObjetivo || goal.montoObjetivo === 0) return 0;
+    const pct = ((goal.montoActual || 0) / goal.montoObjetivo) * 100;
+    return Math.min(Math.round(pct), 100);
+  }
+
+  getPaidPercent(debt: Debt): number {
+    if (!debt.principal || debt.principal === 0) return 0;
+    const paid = debt.principal - debt.saldo;
+    const pct = (paid / debt.principal) * 100;
+    return Math.max(0, Math.min(Math.round(pct), 100));
   }
 
   /** Returns sorted category keys (by highest spend first) */

@@ -26,9 +26,10 @@ savingsGoalSchema.pre(/^find/, function(next) {
 });
 
 savingsGoalSchema.methods.addContribution = function(personalFinanceId, monto) {
-    const montoC = Math.round(monto * 100);
-    this.contribuciones.push({ personalFinanceId, monto: montoC });
-    this.montoActual = ((this.montoActual || 0) * 100 + montoC) / 100;
+    const montoNum = Number(monto);
+    const montoC = Math.round(montoNum * 100);
+    this.contribuciones.push({ personalFinanceId, monto: montoNum });
+    this.montoActual = (Math.round((this.montoActual || 0) * 100) + montoC) / 100;
     return this.save();
 };
 

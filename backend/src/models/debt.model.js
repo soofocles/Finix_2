@@ -27,11 +27,12 @@ debtSchema.pre(/^find/, function(next) {
 });
 
 debtSchema.methods.applyPayment = function(personalFinanceId, monto) {
-    const montoC = Math.round(monto * 100);
+    const montoNum = Number(monto);
+    const montoC = Math.round(montoNum * 100);
     if (montoC > Math.round((this.saldo || 0) * 100)) {
         throw new Error('El pago excede el saldo de la deuda');
     }
-    this.pagos.push({ personalFinanceId, monto: montoC });
+    this.pagos.push({ personalFinanceId, monto: montoNum });
     this.saldo = (Math.round((this.saldo || 0) * 100) - montoC) / 100;
     return this.save();
 };

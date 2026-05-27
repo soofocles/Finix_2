@@ -9,6 +9,9 @@ const handleError = (res, error) => {
 exports.create = async (req, res) => {
     try {
         const data = { ...req.body, userId: req.user.id, createdBy: req.user.id };
+        if (data.fechaInicio && !data.proximaEjecucion) {
+            data.proximaEjecucion = data.fechaInicio;
+        }
         const sched = new PaymentSchedule(data);
         const saved = await sched.save();
         res.status(201).json({ success: true, data: saved });
@@ -75,8 +78,25 @@ exports.executeNow = async (req, res) => {
 
         const saved = await tx.save();
 
-        // Update next execution date is left to a background worker; set proximaEjecucion null for now
-        s.proximaEjecucion = null;
+        // Calculate next execution date based on frequency
+        const proxima = new Date(s.proximaEjecucion || s.fechaInicio || new Date());
+        if (s.frecuencia === 'diaria') proxima.setDate(proxima.getDate() + 1);
+        else if (s.frecuencia === 'semanal') proxima.setDate(proxima.getDate() + 7);
+        else if (s.frecuencia === 'quincenal') proxima.setDate(proxima.getDate() + 15);
+        else if (s.frecuencia === 'mensual') proxima.setMonth(proxima.getMonth() + 1);
+        else if (s.frecuencia === 'bimestral') proxima.setMonth(proxima.getMonth() + 2);
+        else if (s.frecuencia === 'trimestral') proxima.setMonth(proxima.getMonth() + 3);
+        else if (s.frecuencia === 'semestral') proxima.setMonth(proxima.getMonth() + 6);
+        else if (s.frecuencia === 'anual') proxima.setFullYear(proxima.getFullYear() + 1);
+
+        // Deactivate if past end date
+        if (s.fechaFin && proxima > new Date(s.fechaFin)) {
+            s.activa = false;
+            s.proximaEjecucion = null;
+        } else {
+            s.proximaEjecucion = proxima;
+        }
+
         await s.save();
 
         res.status(201).json({ success: true, data: saved });
