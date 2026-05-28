@@ -154,6 +154,13 @@ export class DataEntry implements OnInit {
           this.isSubmitting = false;
           if (res.success) {
             this.successMessage = 'Registro guardado exitosamente';
+            
+            // Actualización optimista de la UI (sin esperar a que recargue la BD)
+            if (res.data) {
+                this.recentRecords.unshift(res.data);
+                if (this.recentRecords.length > 10) this.recentRecords.pop();
+            }
+            
             this.financeForm.reset({
               tipo: values.tipo,
               fecha: new Date().toISOString().substring(0, 10),
@@ -161,7 +168,10 @@ export class DataEntry implements OnInit {
               monto: '',
               descripcion: ''
             });
-            this.loadRecentRecords();
+            // Recargar silenciosamente en segundo plano
+            this.financeService.getFinances(1, 10).subscribe((resp: any) => {
+                if (resp.success) this.recentRecords = resp.data;
+            });
             setTimeout(() => this.successMessage = '', 3000);
           }
         },
