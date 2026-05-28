@@ -168,8 +168,8 @@
                                         <td class="small">{{ record.fecha | date:'dd MMM yyyy' }}</td>
                                         <td class="fw-semibold small">{{ record.descripcion || 'Sin descripción' }}</td>
                                         <td>
-                                            <span class="badge" [ngClass]="{'bg-success': record.tipo === 'ingreso', 'bg-warning text-dark': record.tipo === 'gasto' && record.categoria === 'alimentacion', 'bg-danger': record.tipo === 'gasto' && record.categoria !== 'alimentacion'}">
-                                                {{ record.categoria | titlecase }}
+                                            <span class="badge" [ngClass]="{'bg-success': record.tipo === 'ingreso', 'bg-danger': record.tipo === 'gasto'}">
+                                                {{ record.categoria.replace('_', ' ') | titlecase }}
                                             </span>
                                         </td>
                                         <td class="text-end fw-bold" [ngClass]="{'text-success': record.tipo === 'ingreso', 'text-danger': record.tipo === 'gasto'}">

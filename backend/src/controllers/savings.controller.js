@@ -17,7 +17,7 @@ exports.create = async (req, res) => {
 
 exports.getAll = async (req, res) => {
     try {
-        const goals = await SavingsGoal.find({ userId: req.user.id }).sort({ createdAt: -1 }).lean();
+        const goals = await SavingsGoal.find({ userId: req.user.id }).sort({ createdAt: -1 });
         res.status(200).json({ success: true, data: goals });
     } catch (error) { handleError(res, error); }
 };

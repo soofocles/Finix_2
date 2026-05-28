@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, timeout } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 export interface FinanceRecord {
@@ -38,7 +38,9 @@ export class FinanceService {
   }
 
   getAnalysis(): Observable<{success: boolean, data: FinanceAnalysis}> {
-    return this.http.get<{success: boolean, data: FinanceAnalysis}>(`${this.apiUrl}/analysis`);
+    return this.http.get<{success: boolean, data: FinanceAnalysis}>(`${this.apiUrl}/analysis`).pipe(
+      timeout(15000)
+    );
   }
 
   updateFinance(id: string, data: FinanceRecord): Observable<{success: boolean}> {

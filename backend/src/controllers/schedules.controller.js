@@ -21,7 +21,7 @@ exports.create = async (req, res) => {
 
 exports.getAll = async (req, res) => {
     try {
-        const schedules = await PaymentSchedule.find({ userId: req.user.id }).sort({ createdAt: -1 }).lean();
+        const schedules = await PaymentSchedule.find({ userId: req.user.id }).sort({ createdAt: -1 });
         res.status(200).json({ success: true, data: schedules });
     } catch (error) { handleError(res, error); }
 };

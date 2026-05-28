@@ -21,27 +21,47 @@ process.on('uncaughtException', (err) => {
     process.exit(1);
 });
 
-// ─── Conexión a Base de Datos ────────────────────────────────────────────────
+// ─── Conexión a Base de Datos + Inicio del Servidor ──────────────────────────
 
-mongoose.connect(MONGO_URI)
-    .then(() => {
+(async () => {
+    try {
+        await mongoose.connect(MONGO_URI, {
+            // ── Pool de conexiones ─────────────────────────────────────
+            maxPoolSize: 10,            // Máx conexiones simultáneas
+            minPoolSize: 2,             // Mantener mínimo 2 conexiones calientes
+            maxIdleTimeMS: 30000,       // Cerrar conexiones inactivas después de 30s
+
+            // ── Timeouts ───────────────────────────────────────────────
+            serverSelectionTimeoutMS: 5000,   // Máx 5s para seleccionar servidor
+            socketTimeoutMS: 45000,           // Máx 45s por operación de socket
+            connectTimeoutMS: 10000,          // Máx 10s para establecer conexión
+
+            // ── Resiliencia ────────────────────────────────────────────
+            retryWrites: true,
+            retryReads: true,
+
+            // ── Evitar buffering silencioso ────────────────────────────
+            bufferCommands: false,      // Fallar inmediatamente si no hay conexión
+        });
+
         console.log('Conexión a MongoDB exitosa');
-    })
-    .catch((err) => {
+
+        // Iniciar el servidor SOLO después de conectar a la DB
+        const server = app.listen(PORT, () => {
+            console.log(`Servidor corriendo en el puerto ${PORT}`);
+        });
+
+        // Manejo de rechazos de promesas
+        process.on('unhandledRejection', (err) => {
+            console.error('UNHANDLED REJECTION! Shutting down...');
+            console.error(err.name, err.message);
+            server.close(() => {
+                process.exit(1);
+            });
+        });
+
+    } catch (err) {
         console.error('Error al conectar a MongoDB:', err.message);
-    });
-
-// ─── Inicio del Servidor ──────────────────────────────────────────────────────
-
-const server = app.listen(PORT, () => {
-    console.log(`Servidor corriendo en el puerto ${PORT}`);
-});
-
-// Manejo de rechazos de promesas (por ejemplo, fallo en la red hacia MongoDB)
-process.on('unhandledRejection', (err) => {
-    console.error('UNHANDLED REJECTION! Shutting down...');
-    console.error(err.name, err.message);
-    server.close(() => {
         process.exit(1);
-    });
-});
+    }
+})();

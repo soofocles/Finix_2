@@ -1,31 +1,17 @@
 import { Routes } from '@angular/router';
-import { Landing } from './pages/landing/landing';
-import { Dashboard } from './pages/dashboard/dashboard';
-import { Login } from './pages/login/login';
-import { Register } from './pages/register/register';
-import { Profile } from './pages/profile/profile';
-import { Reports } from './pages/reports/reports';
-import { DataEntry } from './pages/data-entry/data-entry';
-import { Savings } from './pages/savings/savings';
-import { Debts } from './pages/debts/debts';
-import { Schedules } from './pages/schedules/schedules';
-import { ForgotPassword } from './pages/forgot-password/forgot-password';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
-  { path: '', component: Landing },
-  { path: 'login', component: Login },
-  { path: 'register', component: Register },
-  { path: 'forgot-password', component: ForgotPassword },
-  { path: 'dashboard', component: Dashboard, canActivate: [authGuard] },
-  { path: 'profile', component: Profile, canActivate: [authGuard] },
-  { path: 'savings', component: Savings, canActivate: [authGuard] },
-  { path: 'debts', component: Debts, canActivate: [authGuard] },
-  { path: 'schedules', component: Schedules, canActivate: [authGuard] },
-  { path: 'reports', component: Reports, canActivate: [authGuard] },
-  { path: 'data-entry', component: DataEntry, canActivate: [authGuard] },
+  { path: '', loadComponent: () => import('./pages/landing/landing').then(m => m.Landing) },
+  { path: 'login', loadComponent: () => import('./pages/login/login').then(m => m.Login) },
+  { path: 'register', loadComponent: () => import('./pages/register/register').then(m => m.Register) },
+  { path: 'forgot-password', loadComponent: () => import('./pages/forgot-password/forgot-password').then(m => m.ForgotPassword) },
+  { path: 'dashboard', loadComponent: () => import('./pages/dashboard/dashboard').then(m => m.Dashboard), canActivate: [authGuard] },
+  { path: 'profile', loadComponent: () => import('./pages/profile/profile').then(m => m.Profile), canActivate: [authGuard] },
+  { path: 'savings', loadComponent: () => import('./pages/savings/savings').then(m => m.Savings), canActivate: [authGuard] },
+  { path: 'debts', loadComponent: () => import('./pages/debts/debts').then(m => m.Debts), canActivate: [authGuard] },
+  { path: 'schedules', loadComponent: () => import('./pages/schedules/schedules').then(m => m.Schedules), canActivate: [authGuard] },
+  { path: 'reports', loadComponent: () => import('./pages/reports/reports').then(m => m.Reports), canActivate: [authGuard] },
+  { path: 'data-entry', loadComponent: () => import('./pages/data-entry/data-entry').then(m => m.DataEntry), canActivate: [authGuard] },
   { path: '**', redirectTo: '' }
 ];
-
-
-

@@ -95,16 +95,18 @@ async function deleteMe(req, res, next) {
  */
 async function listUsers(req, res, next) {
     try {
-        const pagination = Pagination.parse(req.query);
-        const filters    = {
+        const pag = Pagination.offset(req.query, {
+            allowedSortFields: ['name', 'email', 'createdAt'],
+            defaultSort: '-createdAt',
+        });
+        const filters = {
             search:   req.query.search,
             isActive: req.query.isActive,
             role:     req.query.role,
         };
 
-        const { items, total } = await UserService.list(filters, pagination);
-        const meta = Pagination.meta(total, pagination.page, pagination.limit);
-        ApiResponse.paginated(res, items, meta);
+        const { items, total } = await UserService.list(filters, { skip: pag.skip, limit: pag.limit, page: pag.page });
+        ApiResponse.paginated(res, items, pag.buildMeta(total));
     } catch (err) {
         next(err);
     }

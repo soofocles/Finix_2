@@ -24,18 +24,17 @@ async function create(req, res, next) {
 
 async function list(req, res, next) {
     try {
-        const pagination = Pagination.parse(req.query);
-        const sort       = Pagination.parseSort(req.query,
-            ['fecha', 'monto', 'createdAt', 'estado'],
-            '-fecha'
-        );
+        const pag = Pagination.offset(req.query, {
+            allowedSortFields: ['fecha', 'monto', 'createdAt', 'estado'],
+            defaultSort: '-fecha',
+        });
         const { items, total } = await BusinessFinanceService.list(
             req.user.businessId,
             req.query,
-            pagination,
-            sort
+            { skip: pag.skip, limit: pag.limit, page: pag.page },
+            pag.sort
         );
-        ApiResponse.paginated(res, items, Pagination.meta(total, pagination.page, pagination.limit));
+        ApiResponse.paginated(res, items, pag.buildMeta(total));
     } catch (err) { next(err); }
 }
 
@@ -153,22 +152,22 @@ async function recalculateTaxes(req, res, next) {
 
 async function getPendingApprovals(req, res, next) {
     try {
-        const pagination = Pagination.parse(req.query);
+        const pag = Pagination.offset(req.query);
         const { items, total } = await BusinessFinanceService.getPendingApprovals(
-            req.user.businessId, req.user.userId, pagination
+            req.user.businessId, req.user.userId, { skip: pag.skip, limit: pag.limit, page: pag.page }
         );
-        ApiResponse.paginated(res, items, Pagination.meta(total, pagination.page, pagination.limit));
+        ApiResponse.paginated(res, items, pag.buildMeta(total));
     } catch (err) { next(err); }
 }
 
 async function getOverdue(req, res, next) {
     try {
         const tipo = req.params.tipo; // 'cobrar' | 'pagar'
-        const pagination = Pagination.parse(req.query);
+        const pag = Pagination.offset(req.query);
         const { items, total } = await BusinessFinanceService.getOverdue(
-            req.user.businessId, tipo, pagination
+            req.user.businessId, tipo, { skip: pag.skip, limit: pag.limit, page: pag.page }
         );
-        ApiResponse.paginated(res, items, Pagination.meta(total, pagination.page, pagination.limit));
+        ApiResponse.paginated(res, items, pag.buildMeta(total));
     } catch (err) { next(err); }
 }
 

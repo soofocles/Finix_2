@@ -51,7 +51,7 @@ const normalizeTransactionAmounts = (transactions) => {
  * @returns {Promise<object[]>} Transacciones financieras completadas
  */
 const getCompletedTransactions = async (userId, options = {}) => {
-    const { limit = 10000, select = null } = options;
+    const { limit = 5000, select = 'tipo monto fecha categoria' } = options;
     
     const query = PersonalFinance.find({
         userId,
@@ -61,7 +61,10 @@ const getCompletedTransactions = async (userId, options = {}) => {
     
     if (select) query.select(select);
     
-    const data = await query.lean().limit(limit);
+    const data = await query
+        .sort({ fecha: -1 })
+        .lean()
+        .limit(limit);
     
     // FIX CRÍTICO: Normalizar montos de centavos a moneda real
     return normalizeTransactionAmounts(data);
@@ -168,7 +171,7 @@ exports.getAllFinances = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            data: finances,
+            data: normalizeTransactionAmounts(finances),
             pagination: {
                 page: pageNum,
                 limit: limitNum,
@@ -300,16 +303,14 @@ exports.deleteFinance = async (req, res) => {
  */
 exports.getAnalysis = async (req, res) => {
     try {
-        
-        const limitCheck = await checkAnalyticsLimit(req.user.id);
-        if (limitCheck.exceeded) {
+        const data = await getCompletedTransactions(req.user.id);
+
+        if (data.length > 10000) {
             return res.status(429).json({ 
                 success: false, 
                 message: 'Demasiados registros para análisis. Máximo 10,000.' 
             });
         }
-
-        const data = await getCompletedTransactions(req.user.id);
 
         const analysis = analysisService.analyze(data);
 
@@ -332,15 +333,14 @@ exports.getAnalysis = async (req, res) => {
  */
 exports.getPrediction = async (req, res) => {
     try {
-        const limitCheck = await checkAnalyticsLimit(req.user.id);
-        if (limitCheck.exceeded) {
+        const data = await getCompletedTransactions(req.user.id);
+
+        if (data.length > 10000) {
             return res.status(429).json({ 
                 success: false, 
                 message: 'Demasiados registros para predicción. Máximo 10,000.' 
             });
         }
-
-        const data = await getCompletedTransactions(req.user.id);
 
         const prediction = predictionService.predict(data);
 
@@ -364,15 +364,14 @@ exports.getPrediction = async (req, res) => {
  */
 exports.getSimulation = async (req, res) => {
     try {
-        const limitCheck = await checkAnalyticsLimit(req.user.id);
-        if (limitCheck.exceeded) {
+        const data = await getCompletedTransactions(req.user.id);
+
+        if (data.length > 10000) {
             return res.status(429).json({ 
                 success: false, 
                 message: 'Demasiados registros para simulación. Máximo 10,000.' 
             });
         }
-
-        const data = await getCompletedTransactions(req.user.id);
 
         const simulation = simulationService.simulate(data);
 

@@ -6,10 +6,9 @@
 'use strict';
 
 const express = require('express');
-const cors = require('express-rate-limit'); // wait, cors is cors, let me fix my imports
+const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
-const corsMiddleware = require('cors'); // fix
 
 // Importar rutas
 const authRoutes = require('./routes/auth.routes');
@@ -28,7 +27,7 @@ const app = express();
 app.use(helmet());
 
 // CORS (Cross-Origin Resource Sharing)
-app.use(corsMiddleware());
+app.use(cors());
 
 // Logging de peticiones HTTP en consola
 if (process.env.NODE_ENV === 'development') {

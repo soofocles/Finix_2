@@ -83,6 +83,7 @@ export class AuthService {
 
   getMe(): Observable<any> {
     return this.http.get(`${this.apiUrl}/me`).pipe(
+      timeout(10000),
       tap((res: any) => {
         if (res.success && res.data) {
           localStorage.setItem('user', JSON.stringify(res.data));
