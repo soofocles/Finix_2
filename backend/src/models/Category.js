@@ -64,19 +64,17 @@ categorySchema.methods.softDelete = function () {
 };
 
 // Soft delete middleware - auto-exclude deleted categories from queries
-categorySchema.pre(/^find/, function(next) {
+categorySchema.pre(/^find/, function() {
     this.where({ isDeleted: false });
-    next();
 });
 
-categorySchema.pre('aggregate', function(next) {
+categorySchema.pre('aggregate', function() {
     const pipeline = this.pipeline();
-    if (pipeline.length && pipeline[0].$geoNear) {
+    if (pipeline.length > 0 && pipeline[0].$geoNear) {
         pipeline.splice(1, 0, { $match: { isDeleted: false } });
     } else {
         pipeline.unshift({ $match: { isDeleted: false } });
     }
-    next();
 });
 
 module.exports = mongoose.model('Category', categorySchema);

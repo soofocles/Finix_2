@@ -18,6 +18,7 @@ const analysisService = require('../services/financeAnalysis.service');
  * @returns {Response} JSON response con formato estándar
  */
 const handleError = (res, error) => {
+    console.error('[PERSONAL FINANCE ERROR]', error.name, error.message, error.stack);
     if (error.name === 'ValidationError') {
         return res.status(400).json({ success: false, message: error.message });
     }
@@ -51,7 +52,7 @@ const normalizeTransactionAmounts = (transactions) => {
  * @returns {Promise<object[]>} Transacciones financieras completadas
  */
 const getCompletedTransactions = async (userId, options = {}) => {
-    const { limit = 5000, select = 'tipo monto fecha categoria' } = options;
+    const { limit = 5000, select = 'tipo monto fecha categoria estado' } = options;
     
     const query = PersonalFinance.find({
         userId,

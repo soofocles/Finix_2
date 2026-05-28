@@ -119,7 +119,7 @@ export class DataEntry implements OnInit {
 
     const values = this.financeForm.value;
     
-    const montoStr = String(values.monto).replace(/\./g, '');
+    const montoStr = String(values.monto).replace(/\D/g, '');
     const montoNum = Number(montoStr);
     if (isNaN(montoNum) || montoNum <= 0) {
       this.isSubmitting = false;

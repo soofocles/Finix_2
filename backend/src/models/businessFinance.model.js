@@ -651,10 +651,10 @@ const businessFinanceSchema = new Schema({
         type: {
             type: String,
             enum: ['Point'],
-            default: 'Point',
         },
         coordinates: {
             type: [Number],
+            default: undefined,
             validate: {
                 validator: function (v) {
                     if (!v || v.length === 0) return true;
@@ -838,37 +838,37 @@ businessFinanceSchema.virtual('etiqueta').get(function () {
 
 // ─── Pre-validate Hook ────────────────────────────────────────────────────────
 
-businessFinanceSchema.pre('validate', function (next) {
+businessFinanceSchema.pre('validate', function () {
 
     // Transferencia integrity
     if (this.tipo === 'transferencia') {
         if (!this.descripcion)
-            return next(new Error('Las transferencias requieren descripción'));
+            throw new Error('Las transferencias requieren descripción');
         if (!this.transferenciaId)
-            return next(new Error('Transferencia debe estar vinculada'));
+            throw new Error('Transferencia debe estar vinculada');
         if (this.cuentaOrigenId?.toString() === this.cuentaDestinoId?.toString())
-            return next(new Error('Cuenta origen y destino no pueden ser iguales'));
+            throw new Error('Cuenta origen y destino no pueden ser iguales');
     }
 
     // Basic account requirements
     const tiposGasto = ['gasto', 'factura_compra', 'nomina', 'activo_fijo'];
     if (tiposGasto.includes(this.tipo) && !this.cuentaOrigenId)
-        return next(new Error(`${this.tipo} requiere cuenta origen`));
+        throw new Error(`${this.tipo} requiere cuenta origen`);
 
     const tiposIngreso = ['ingreso', 'factura_venta', 'anticipo'];
     if (tiposIngreso.includes(this.tipo) && !this.cuentaDestinoId)
-        return next(new Error(`${this.tipo} requiere cuenta destino`));
+        throw new Error(`${this.tipo} requiere cuenta destino`);
 
     // Currency validation
     if (this.moneda !== 'COP' && (!this.tasaCambio || this.tasaCambio <= 0))
-        return next(new Error('Tasa de cambio inválida para moneda extranjera'));
+        throw new Error('Tasa de cambio inválida para moneda extranjera');
 
     // DIAN mandatory fields for electronic invoices
     if (this.facturaElectronica && this.tipo === 'factura_venta') {
         if (!this.terceroId)
-            return next(new Error('Factura electrónica requiere tercero (cliente)'));
+            throw new Error('Factura electrónica requiere tercero (cliente)');
         if (!this.dian?.numeroResolucion)
-            return next(new Error('Factura electrónica requiere resolución DIAN'));
+            throw new Error('Factura electrónica requiere resolución DIAN');
     }
 
     // Prevent modifications on posted transactions (only reversals allowed)
@@ -876,20 +876,18 @@ businessFinanceSchema.pre('validate', function (next) {
         const allowedFields = new Set(['historialCambios', 'updatedAt', 'updatedBy', 'aiMetadata']);
         const modifiedRestricted = this.modifiedPaths().some(p => !allowedFields.has(p));
         if (modifiedRestricted)
-            return next(new Error('No se puede modificar una transacción contabilizada. Use un reverso.'));
+            throw new Error('No se puede modificar una transacción contabilizada. Use un reverso.');
     }
 
     // Closed period guard
     if (this.periodoContableCerrado && this.isModified('monto'))
-        return next(new Error('El periodo contable está cerrado'));
-
-    next();
+        throw new Error('El periodo contable está cerrado');
 });
 
 // ─── Pre-save Hook ────────────────────────────────────────────────────────────
 
-businessFinanceSchema.pre('save', function (next) {
-    if (!this.isModified()) return next();
+businessFinanceSchema.pre('save', function () {
+    if (!this.isModified()) return;
 
     // ── Auto-compute derived monetary fields ─────────────────────────────────
     if (this.isModified('monto') || this.isModified('impuestos') || this.isModified('tasaCambio')) {
@@ -942,20 +940,17 @@ businessFinanceSchema.pre('save', function (next) {
             });
         }
     });
-
-    next();
 });
 
 // ─── Query Middleware ─────────────────────────────────────────────────────────
 
 /** Auto-exclude soft-deleted documents from all find queries */
-businessFinanceSchema.pre(/^find/, function (next) {
+businessFinanceSchema.pre(/^find/, function () {
     this.where({ isDeleted: false });
-    next();
 });
 
 /** Auto-exclude soft-deleted documents from aggregation pipelines */
-businessFinanceSchema.pre('aggregate', function (next) {
+businessFinanceSchema.pre('aggregate', function () {
     const pipeline = this.pipeline();
     const isGeoNear = pipeline.length && pipeline[0].$geoNear;
 
@@ -964,8 +959,6 @@ businessFinanceSchema.pre('aggregate', function (next) {
     } else {
         pipeline.unshift({ $match: { isDeleted: false } });
     }
-
-    next();
 });
 
 // ─── Instance Methods ─────────────────────────────────────────────────────────

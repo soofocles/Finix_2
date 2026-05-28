@@ -22,6 +22,8 @@ export class Savings implements OnInit {
   contributionAmount: number = 0;
   showContributionModal = false;
   editingGoalId: string | null = null;
+  contributionError = '';
+  contributionSubmitting = false;
 
   constructor(
     private fb: FormBuilder,
@@ -99,7 +101,7 @@ export class Savings implements OnInit {
     if (this.form.invalid) return;
     const values = this.form.value;
     
-    const objetivoStr = String(values.montoObjetivo).replace(/\./g, '');
+    const objetivoStr = String(values.montoObjetivo).replace(/\D/g, '');
     const objetivoNum = Number(objetivoStr);
     if (isNaN(objetivoNum) || objetivoNum <= 0) return;
 
@@ -110,7 +112,7 @@ export class Savings implements OnInit {
     };
 
     if (values.montoActual !== null && values.montoActual !== undefined && values.montoActual !== '') {
-      const actualStr = String(values.montoActual).replace(/\./g, '');
+      const actualStr = String(values.montoActual).replace(/\D/g, '');
       const actualNum = Number(actualStr);
       if (!isNaN(actualNum)) {
         data.montoActual = actualNum;
@@ -151,27 +153,41 @@ export class Savings implements OnInit {
   openContribution(goalId: string): void {
     this.selectedGoalId = goalId;
     this.showContributionModal = true;
+    this.contributionError = '';
   }
 
   closeContribution(): void {
     this.showContributionModal = false;
     this.selectedGoalId = null;
     this.contributionForm.reset();
+    this.contributionError = '';
+    this.contributionSubmitting = false;
   }
 
   submitContribution(): void {
     if (this.contributionForm.invalid || !this.selectedGoalId) return;
     
-    const montoStr = String(this.contributionForm.value.monto).replace(/\./g, '');
+    const montoStr = String(this.contributionForm.value.monto).replace(/\D/g, '');
     const montoNum = Number(montoStr);
-    if (isNaN(montoNum) || montoNum <= 0) return;
+    if (isNaN(montoNum) || montoNum <= 0) {
+      this.contributionError = 'Monto inválido';
+      return;
+    }
+
+    this.contributionSubmitting = true;
+    this.contributionError = '';
 
     this.savingsService.contribute(this.selectedGoalId, { monto: montoNum }).subscribe({
       next: () => {
+        this.contributionSubmitting = false;
         this.closeContribution();
         this.load();
       },
-      error: (err) => console.error('Error al aportar a la meta', err)
+      error: (err) => {
+        this.contributionSubmitting = false;
+        this.contributionError = err.error?.message || err.message || 'Error al aportar a la meta';
+        console.error('Error al aportar a la meta', err);
+      }
     });
   }
 

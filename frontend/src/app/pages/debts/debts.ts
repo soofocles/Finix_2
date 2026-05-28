@@ -21,6 +21,8 @@ export class Debts implements OnInit {
   selectedDebtId: string | null = null;
   showPaymentModal = false;
   editingDebtId: string | null = null;
+  paymentError = '';
+  paymentSubmitting = false;
 
   constructor(
     private fb: FormBuilder,
@@ -94,7 +96,7 @@ export class Debts implements OnInit {
     if (this.form.invalid) return;
     const values = this.form.value;
     
-    const principalStr = String(values.principal).replace(/\./g, '');
+    const principalStr = String(values.principal).replace(/\D/g, '');
     const principalNum = Number(principalStr);
     if (isNaN(principalNum) || principalNum <= 0) return;
 
@@ -105,7 +107,7 @@ export class Debts implements OnInit {
     };
 
     if (values.saldo !== null && values.saldo !== undefined && values.saldo !== '') {
-      const saldoStr = String(values.saldo).replace(/\./g, '');
+      const saldoStr = String(values.saldo).replace(/\D/g, '');
       const saldoNum = Number(saldoStr);
       if (!isNaN(saldoNum)) {
         data.saldo = saldoNum;
@@ -146,27 +148,41 @@ export class Debts implements OnInit {
   openPayment(debtId: string): void {
     this.selectedDebtId = debtId;
     this.showPaymentModal = true;
+    this.paymentError = '';
   }
 
   closePayment(): void {
     this.showPaymentModal = false;
     this.selectedDebtId = null;
     this.paymentForm.reset();
+    this.paymentError = '';
+    this.paymentSubmitting = false;
   }
 
   submitPayment(): void {
     if (this.paymentForm.invalid || !this.selectedDebtId) return;
     
-    const montoStr = String(this.paymentForm.value.monto).replace(/\./g, '');
+    const montoStr = String(this.paymentForm.value.monto).replace(/\D/g, '');
     const montoNum = Number(montoStr);
-    if (isNaN(montoNum) || montoNum <= 0) return;
+    if (isNaN(montoNum) || montoNum <= 0) {
+      this.paymentError = 'Monto inválido';
+      return;
+    }
+
+    this.paymentSubmitting = true;
+    this.paymentError = '';
 
     this.debtsService.pay(this.selectedDebtId, { monto: montoNum }).subscribe({
       next: () => {
+        this.paymentSubmitting = false;
         this.closePayment();
         this.load();
       },
-      error: (err) => console.error('Error al registrar pago de deuda', err)
+      error: (err) => {
+        this.paymentSubmitting = false;
+        this.paymentError = err.error?.message || err.message || 'Error al registrar el pago';
+        console.error('Error al registrar pago de deuda', err);
+      }
     });
   }
 

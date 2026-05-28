@@ -309,51 +309,7 @@
                 </div>
             </div>
 
-            <!-- ===== GRÁFICAS (solo si hay datos) ===== -->
-            @if (!isLoading) {
-                <div class="row g-4 mb-5">
-                    <!-- Gráfica de Balance -->
-                    <div class="col-md-7">
-                        <div class="p-4 rounded-4 border card-glass shadow-sm h-100">
-                            <h5 class="fw-bold text-white mb-4"><i class="bi bi-bar-chart-fill me-2 text-primary"></i> Resumen de Balance</h5>
-                            @if (hasAnyFinanceData()) {
-                                <div style="height: 300px; width: 100%;">
-                                    <canvas #balanceChart></canvas>
-                                </div>
-                            } @else {
-                                <div class="d-flex flex-column align-items-center justify-content-center h-100 py-5 text-center">
-                                    <i class="bi bi-bar-chart text-white-50 mb-3" style="font-size: 3rem; opacity: 0.3;"></i>
-                                    <p class="text-white-50 small mb-1">Aún no hay datos registrados.</p>
-                                    <a routerLink="/data-entry" class="btn btn-sm btn-outline-primary rounded-pill mt-2">
-                                        <i class="bi bi-plus-circle me-1"></i> Agregar primer movimiento
-                                    </a>
-                                </div>
-                            }
-                        </div>
-                    </div>
 
-                    <!-- Gráfica de Gastos por Categoría -->
-                    <div class="col-md-5">
-                        <div class="p-4 rounded-4 border card-glass shadow-sm h-100 position-relative">
-                            <h5 class="fw-bold text-white mb-4"><i class="bi bi-pie-chart-fill me-2 text-danger"></i> Gastos por Categoría</h5>
-                            @if (getCategoryKeys().length > 0) {
-                                <div style="height: 250px; width: 100%; position: relative;">
-                                    <canvas #expenseChart></canvas>
-                                    <div class="position-absolute top-50 start-0 w-50 text-center" style="transform: translateY(-50%); pointer-events: none; margin-left: -5%;">
-                                        <span class="d-block text-white-50" style="font-size: 11px;">Total Gastos</span>
-                                        <span class="fw-bold text-white fs-5">{{ analysis.totalGastos | currency:'COP':'symbol':'1.0-0' }}</span>
-                                    </div>
-                                </div>
-                            } @else {
-                                <div class="d-flex flex-column align-items-center justify-content-center h-100 py-4 text-center">
-                                    <i class="bi bi-pie-chart text-white-50 mb-3" style="font-size: 3rem; opacity: 0.3;"></i>
-                                    <p class="text-white-50 small mb-0">No hay gastos categorizados aún.</p>
-                                </div>
-                            }
-                        </div>
-                    </div>
-                </div>
-            }
 
             <!-- ===== ESTADÍSTICAS ADICIONALES ===== -->
             <div class="row g-4 mb-5">

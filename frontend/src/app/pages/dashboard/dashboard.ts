@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
-declare var Chart: any;
+
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { FinanceService, FinanceAnalysis, FinanceRecord } from '../../core/services/finance.service';
 import { AuthService } from '../../core/services/auth.service';
@@ -34,10 +34,7 @@ export class Dashboard implements OnInit, AfterViewInit {
   hasData = false;
   userName = 'Usuario';
 
-  @ViewChild('expenseChart') expenseChartRef!: ElementRef;
-  @ViewChild('balanceChart') balanceChartRef!: ElementRef;
-  expenseChartInstance: any = null;
-  balanceChartInstance: any = null;
+
 
   // Extra stats
   totalSavingsAmount = 0;
@@ -91,12 +88,6 @@ export class Dashboard implements OnInit, AfterViewInit {
             gastoPorCategoria:   res.data.gastoPorCategoria
           };
           this.hasData = this.analysis.totalIngresos > 0 || this.analysis.totalGastos > 0;
-          
-          // Render charts immediately after DOM updates
-          setTimeout(() => {
-            this.renderExpenseChart();
-            this.renderBalanceChart();
-          }, 100);
         }
         this.isLoadingAnalysis = false;
         this.checkGlobalLoading();
@@ -220,88 +211,4 @@ export class Dashboard implements OnInit, AfterViewInit {
     return ((this.analysis.balance / this.analysis.totalIngresos) * 100).toFixed(0) + '%';
   }
 
-  renderExpenseChart(): void {
-    if (!this.expenseChartRef?.nativeElement) return;
-    const ctx = this.expenseChartRef.nativeElement.getContext('2d');
-    if (this.expenseChartInstance) { this.expenseChartInstance.destroy(); }
-
-    const categories = this.getCategoryKeys();
-    const data = categories.map(cat => this.analysis.gastoPorCategoria![cat]);
-    if (categories.length === 0) return;
-
-    this.expenseChartInstance = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: categories,
-        datasets: [{
-          data: data,
-          backgroundColor: ['#ef4444','#f59e0b','#10b981','#3b82f6','#8b5cf6','#ec4899','#64748b'],
-          borderWidth: 0,
-          hoverOffset: 4
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { position: 'right', labels: { color: 'rgba(255,255,255,0.7)', font: { family: 'Outfit' } } },
-          tooltip: {
-            backgroundColor: 'rgba(0,0,0,0.8)',
-            callbacks: {
-              label: (c: any) => {
-                let l = c.label ? c.label + ': ' : '';
-                if (c.parsed !== null) l += new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(c.parsed);
-                return l;
-              }
-            }
-          }
-        },
-        cutout: '70%'
-      }
-    });
-  }
-
-  renderBalanceChart(): void {
-    if (!this.balanceChartRef?.nativeElement) return;
-    const ctx = this.balanceChartRef.nativeElement.getContext('2d');
-    if (this.balanceChartInstance) { this.balanceChartInstance.destroy(); }
-
-    this.balanceChartInstance = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ['Ingresos', 'Gastos', 'Balance'],
-        datasets: [{
-          label: 'Monto',
-          data: [this.analysis.totalIngresos, this.analysis.totalGastos, this.analysis.balance],
-          backgroundColor: ['rgba(16,185,129,0.8)','rgba(239,68,68,0.8)','rgba(59,130,246,0.8)'],
-          borderRadius: 6,
-          borderWidth: 0
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            backgroundColor: 'rgba(0,0,0,0.8)',
-            callbacks: {
-              label: (c: any) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(c.raw)
-            }
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            grid: { color: 'rgba(255,255,255,0.05)' },
-            ticks: { color: 'rgba(255,255,255,0.5)', font: { family: 'Outfit' } }
-          },
-          x: {
-            grid: { display: false },
-            ticks: { color: 'rgba(255,255,255,0.7)', font: { family: 'Outfit', weight: '500' } }
-          }
-        }
-      }
-    });
-  }
 }

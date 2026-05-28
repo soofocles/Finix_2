@@ -2,6 +2,7 @@ const SavingsGoal = require('../models/savingsGoal.model');
 const PersonalFinance = require('../models/personalFinance.model');
 
 const handleError = (res, error) => {
+    console.error('[SAVINGS ERROR]', error.name, error.message, error.stack);
     if (error.name === 'ValidationError') return res.status(400).json({ success: false, message: error.message });
     return res.status(500).json({ success: false, message: 'Error interno del servidor', error: error.message });
 };

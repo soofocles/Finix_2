@@ -123,15 +123,15 @@ const personalFinanceSchema = new Schema({
     location: {
         type: {
             type: String,
-            enum: ['Point'],
-            default: 'Point'
+            enum: ['Point']
         },
         coordinates: {
             type: [Number],
+            default: undefined,
             required: false,
             validate: {
                 validator: function(v) {
-                    if (!v) return true;
+                    if (!v || v.length === 0) return true;
                     return v.length === 2 &&
                         v[0] >= -180 && v[0] <= 180 &&
                         v[1] >= -90 && v[1] <= 90;
@@ -232,23 +232,32 @@ personalFinanceSchema.statics.toCents = (value) => {
     return Math.round(value * 100);
 };
 
+// FIX: Strip empty location subdocuments before validation
+// Mongoose may auto-create location: { coordinates: [] } which breaks the 2dsphere index
+personalFinanceSchema.pre('validate', function () {
+    if (this.location) {
+        const coords = this.location.coordinates;
+        if (!coords || !Array.isArray(coords) || coords.length === 0) {
+            this.location = undefined;
+        }
+    }
+});
+
 // Synchronous validation - async checks moved to service layer
-personalFinanceSchema.pre('validate', function (next) {
+personalFinanceSchema.pre('validate', function () {
     if (this.tipo === 'transferencia' && !this.descripcion) {
-        return next(new Error('Las transferencias requieren descripción'));
+        throw new Error('Las transferencias requieren descripción');
     }
 
     if (this.tipo === 'transferencia') {
         if (!this.transferenciaId) {
-            // Optional: return next(new Error('Transferencia debe estar vinculada'));
+            // Optional: throw new Error('Transferencia debe estar vinculada');
         }
     }
 
     if (this.moneda !== 'COP' && (!this.tasaCambio || this.tasaCambio <= 0)) {
-        return next(new Error('Tasa de cambio inválida'));
+        throw new Error('Tasa de cambio inválida');
     }
-
-    next();
 });
 
 personalFinanceSchema.methods.softDelete = function () {
@@ -261,7 +270,7 @@ personalFinanceSchema.pre(/^find/, function () {
     this.where({ isDeleted: false });
 });
 
-personalFinanceSchema.pre('aggregate', function(next) {
+personalFinanceSchema.pre('aggregate', function() {
     const pipeline = this.pipeline();
 
     if (pipeline.length && pipeline[0].$geoNear) {
@@ -269,15 +278,13 @@ personalFinanceSchema.pre('aggregate', function(next) {
     } else {
         pipeline.unshift({ $match: { isDeleted: false } });
     }
-
-    next();
 });
 
-personalFinanceSchema.pre('save', function(next) {
-    if (!this.isModified()) return next();
+personalFinanceSchema.pre('save', function() {
+    if (!this.isModified()) return;
     
     // OPTIMIZACIÓN: No rastrear historial de cambios en la creación del documento (mejora el tiempo de guardado drásticamente)
-    if (this.isNew) return next();
+    if (this.isNew) return;
 
     // Limit audit trail size (MongoDB 16MB doc limit)
     if (this.historialCambios.length > 50) {
@@ -304,8 +311,6 @@ personalFinanceSchema.pre('save', function(next) {
             });
         }
     });
-
-    next();
 });
 
 module.exports = mongoose.model('PersonalFinance', personalFinanceSchema);

@@ -74,19 +74,17 @@ accountSchema.methods.softDelete = function () {
     return this.save();
 };
 
-accountSchema.pre(/^find/, function(next) {
+accountSchema.pre(/^find/, function() {
     this.where({ isDeleted: false });
-    next();
 });
 
-accountSchema.pre('aggregate', function(next) {
+accountSchema.pre('aggregate', function() {
     const pipeline = this.pipeline();
-    if (pipeline.length && pipeline[0].$geoNear) {
+    if (pipeline.length > 0 && pipeline[0].$geoNear) {
         pipeline.splice(1, 0, { $match: { isDeleted: false } });
     } else {
         pipeline.unshift({ $match: { isDeleted: false } });
     }
-    next();
 });
 
 module.exports = mongoose.model('Account', accountSchema);
