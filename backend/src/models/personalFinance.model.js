@@ -275,6 +275,9 @@ personalFinanceSchema.pre('aggregate', function(next) {
 
 personalFinanceSchema.pre('save', function(next) {
     if (!this.isModified()) return next();
+    
+    // OPTIMIZACIÓN: No rastrear historial de cambios en la creación del documento (mejora el tiempo de guardado drásticamente)
+    if (this.isNew) return next();
 
     // Limit audit trail size (MongoDB 16MB doc limit)
     if (this.historialCambios.length > 50) {
