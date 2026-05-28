@@ -233,3 +233,11 @@ body {
 .border-white-opacity-10 {
     border-color: rgba(255, 255, 255, 0.1) !important;
 }
+
+/* Fix dropdown options visibility in dark theme */
+select.form-select-glass option,
+select.form-select option,
+select.form-control option {
+    background-color: #1a1a2e !important; /* Dark blue/purple matching the theme */
+    color: #ffffff !important;
+}
